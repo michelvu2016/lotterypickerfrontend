@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-xs-12 col-md-10 col-lg-10 col-md-offset-1 col-lg offset-2">
+
+
+        <table class="table table-bordered text-center"
+               style="font-weight:bold; font-size:11pt;">
+            <tr *ngFor="let numberSet of drawnNumbers; let i = index">
+                <td *ngFor="let num of numberSet; let j = index">
+
+                      <app-number-control [number]="num"
+                        (numberSelectedEvent)="numberHighlighted($event)"
+                      >
+
+                      </app-number-control>
+
+                </td>
+            </tr>
+
+
+        </table>
+
+
+
+    </div>
+
+
+</div>
+

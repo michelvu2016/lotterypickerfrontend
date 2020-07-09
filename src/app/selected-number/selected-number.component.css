@@ -1,0 +1,26 @@
+.trash {
+   display:inline;
+  color: blue;
+   font-weight: bold;
+   padding-left: 10px;
+  padding-right: 10pt;
+  margin-left: 5px;
+  margin-right:5px;
+  width:30px;
+  background-color: beige;
+
+}
+
+.ticket {
+  font-size: 14pt;
+  font-weight: bold;
+  cursor: pointer;
+  color:fuchsia;
+  /* display: inline-block; */
+  max-width: 20px;
+  border: 1px black solid;
+  background-color: beige;
+  margin-right: 4px;
+  padding-left:3px;
+  padding-right:3px;
+}

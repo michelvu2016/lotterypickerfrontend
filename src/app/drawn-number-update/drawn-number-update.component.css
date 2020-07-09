@@ -1,0 +1,42 @@
+.dateField {
+   display:inline-block;
+   width: 100px;
+  color:black;
+  background-color: beige;
+  padding-left:5px;
+}
+
+.seqNumberField {
+  display:inline-block;
+  width: 100px;
+  color:black;
+  background-color: lightgray;
+  padding-left:5px;
+}
+
+.numberField {
+  display:inline-block;
+  width: 130px;
+  color:black;
+  background-color: azure;
+  padding-left:5px;
+}
+
+.megaField {
+  display:inline-block;
+  width: 50px;
+  color:black;
+  background-color: gainsboro;
+  padding-left:5px;
+}
+
+.lastDrawnNumberPanel {
+  height: 200px;
+  display: block;
+
+  overflow: scroll;
+}
+
+.update-number {
+  font-size: 12pt;
+}

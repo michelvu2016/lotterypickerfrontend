@@ -1,0 +1,81 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-9 col-md-8 col-lg-6">
+
+      <h3>Update the last drawn number history for {{lotteryTypeId}}</h3>
+      <div style="margin-top:5px; margin-bottom: 5px;">
+        <h4>How many draws back to you want to see?</h4>
+        <span><input type="text" placeholder="Enter number" #numOfNumEl>
+      <button class="btn btn-primary" style="margin-left:5px;"
+              (click)="getData(numOfNumEl)"
+      >Get Data</button></span>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <span class="dateField">Date drawn</span>
+          <span class="seqNumberField">Seq Num</span>
+          <span class="numberField">Numbers</span>
+          <span class="megaField">Mega</span>
+        </li>
+      
+        <li class="list-group-item" *ngFor="let ticket of lastDrawnNumbers; let i = index">
+          <span class="dateField">{{ticket.date}}</span>
+          <span class="seqNumberField">{{ticket.seqNum}}</span>
+          <span class="numberField">{{ticket.numbers | stringArrayToString}}</span>
+          <span class="megaField">{{ticket.mega}}</span>
+        </li>
+      
+
+
+      </ul>
+ <div *ngIf="numberOfLastDrawnsNeeded > 0">
+        <div>
+          <h4>The number of latest drawwn ticket needed: {{numberOfLastDrawnsNeeded}}</h4>
+        </div>
+
+        <div>
+          <h4>Click on the link <a href="{{dataRetrievalUrl}}" target="_blank">{{dataRetrievalUrl}}</a></h4>
+        </div>
+
+ </div>
+
+
+<!-- Section for update the number history -->
+<div class="update-number">
+  <div class="row" style="font-size:12pt;">
+    <div class="col-xs-9 col-sm-9 col md-9 col-lg-9">
+      <!--
+      <input type="text" placeholder="enter the last drawn number here" class="form-control" #ticket>
+      -->
+
+      <textarea rows="15" cols="125" placeholder="enter the last drawn number here"
+             class="form-control" #ticket>
+      </textarea>
+    </div>
+    <div class="col-xs-9 col-sm-9 col md-6 col-lg-6">
+
+
+
+    </div>
+  </div>
+
+  <div style="margin-top:30px">
+     <button class="btn btn-primary"
+     (click)="submitDrawnNumberAsJson(ticket)"
+     >Submit</button>
+    <button class="btn btn-primary"  style="margin-left:5px;"
+            (click)="clearField(ticket)"
+    >Clear Input</button>
+  </div>
+
+  <div *ngIf="submitResult">
+    <h3>Submit result:</h3>
+    <div>
+       {{submitResult}}
+    </div>
+  </div>
+
+</div>
+
+
+  </div>
+</div>

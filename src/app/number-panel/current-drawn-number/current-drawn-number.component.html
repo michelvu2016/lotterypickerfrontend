@@ -1,0 +1,14 @@
+<h4>
+  Current drawn number:
+</h4>
+  <app-number-control
+    *ngFor="let num of currentDrawnNumbers; let i=index"
+    [cssClassName]="'drawn_number drawnNumber_'+(i+1)"
+    [displayColorClass]="'drawn_number drawnNumber_'+(i+1)" [number]="num"
+    style="margin-right:10px;"
+
+  >
+
+  </app-number-control>
+
+

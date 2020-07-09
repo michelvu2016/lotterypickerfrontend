@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12 col-sm-12 col xs-12">
+       <div class="list-group">
+         <div class="list-group-item"
+
+              (click)="onClick()"
+
+              (mouseover)="mouseOverNumber()"
+
+              [ngClass]="{active: this.currentNumberIndex() == this.ticketNumber}"  style="font-size:12pt;font-weight:bold">
+
+           <span class="ticket"
+                 id="ticketNumber"
+                  cdkDropList
+                  #ticketNumbers = 'cdkDropList'
+                  [cdkDropListData]="getTicket()"
+                  [cdkDropListConnectedTo]="[trash]"
+                  (cdkDropListDropped)="drop($event)">
+             <span class="ticket" *ngFor="let num of numbers; let i = index" cdkDrag ng-mousedown="onTicketNumberClick($event)">
+                {{num}}
+             </span>
+
+        </span>
+           <span class="glyphicon glyphicon-remove" style="cursor: pointer"
+                 (click)="remove()"></span>
+           <input type="radio" (click)="turnOnOffHighlight()"/>
+           <span class="trash"
+                cdkDropList
+               #trash='cdkDropList'
+                 [cdkDropListData]="trashBin"
+                 [cdkDropListConnectedTo]="[ticketNumbers]"
+                 (cdkDropListDropped)="drop($event)">
+                  <span cdkDrag>Trash</span>
+           </span>
+           <span>
+            <app-message-board  [messageSource] = "{ticketId: this.ticketId, msgSource:this.messsageObservable(), multiplexMsg:true}"></app-message-board>
+
+           </span>
+
+         </div>
+
+
+
+     </div>
+
+
+
+  </div>
+</div>

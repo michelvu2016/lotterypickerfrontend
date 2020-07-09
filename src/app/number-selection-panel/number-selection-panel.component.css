@@ -1,0 +1,9 @@
+.gameName {
+  font-size: 18pt;
+  color:darkgreen;
+  font-style: italic;
+}
+
+#controlToolBar button + button {
+   margin-left: 3px;
+}

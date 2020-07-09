@@ -1,0 +1,19 @@
+
+      <table class="table table-bordered text-center pastDrawnNumber">
+        <tr *ngFor="let numberSet of numberList; let i = index">
+          <td *ngFor="let num of numberSet; let j = index">
+
+            <app-number-control [number]="num"
+
+            (numberSelectedEvent)="onOverNumber($event)"
+            >
+
+            </app-number-control>
+
+          </td>
+        </tr>
+
+
+      </table>
+
+

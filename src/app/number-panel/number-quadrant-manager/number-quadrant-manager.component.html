@@ -1,0 +1,15 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4"
+       *ngFor="let panelNumber of panelIndexList; let i = index">
+     <app-number-quadrant
+      
+      [index]="panelNumber"
+      (doneDisplayNumber) = "onDoneDisplayPanel($event, panelIndexList)"
+     (overNumberEvent)="onOverNumber($event)"
+      (notifyCurrentNumberEvent)="onNotifyCurrentDrawnNumber()"
+      >
+
+     </app-number-quadrant>
+  </div>
+</div>
+

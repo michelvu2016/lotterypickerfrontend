@@ -1,0 +1,95 @@
+/* You can add global styles to this file, and also import other style files */
+.drawn_number {
+  font-size: 13pt;
+}
+
+.drawn_number_in_panel {
+  font-size: 10pt;
+  font-weight: bold;
+}
+
+.drawn_number_background {
+  background-color: lightgray;
+}
+
+.drawnNumber_1 {
+  color: red;
+  font-size: 14pt;
+}
+
+.drawnNumber_2 {
+  color: blue;
+  font-size: 14pt;
+}
+
+.drawnNumber_3 {
+  color:green;
+  font-size: 14pt;
+}
+
+.drawnNumber_4 {
+  color: chocolate;
+  font-size: 14pt;
+}
+
+.drawnNumber_5 {
+  color:maroon ;
+  font-size: 14pt;
+}
+
+.visitNumber {
+  color:red;
+  background-color: aqua;
+  font-weight:bold;
+
+}
+
+.normalNumber {
+  color:black;
+
+  font-wight:bold;
+
+}
+
+.drawnNumberRed {
+  color:red;
+  background-color: beige;
+}
+
+.drawnNumberBlue {
+  color:blue;
+  background-color: beige;
+}
+
+.drawnNumberGreen {
+  color:darkgreen;
+  background-color: beige;
+}
+
+.drawnNumberPurple {
+  color:purple;
+  background-color: beige;
+}
+
+.drawnNumberBrown {
+  color:brown;
+  background-color: beige;
+}
+
+.drawnNumberPink {
+  color:deeppink;
+  background-color: beige;
+}
+
+.twoOrMoreNumberMatchPastTicket {
+  background-color: lightgray;
+  color: red;
+  font-weight: bold;
+}
+
+.pastDrawnNumber {
+  font-weight: bold;
+  font-size: 11pt;
+  color: black;
+  background: white;
+}

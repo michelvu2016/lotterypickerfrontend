@@ -1,0 +1,67 @@
+
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <h3>Lottery Number Picker <span class="gameName">{{gameName}}</span></h3>
+    </div>
+
+  </div>
+
+  <div class="row" style="margin-bottom:6px; font-weight:bold" id="controlToolBar">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <app-current-drawn-number></app-current-drawn-number>
+      <button class="btn btn-primary" (click)="toggleHighlightNumberInPanel()">{{numberHighLightTextLabel}}</button>
+      <button class="btn btn-primary" (click)="toggleShowQuadrantAnalysis()">
+        {{showQuadrantAnalysisLabel}}
+      </button>
+    </div>
+  </div>
+   <div class="row" *ngIf="showQuadrantAnalysis">
+     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+       <app-number-quadrant-analysis></app-number-quadrant-analysis>
+     </div>
+   </div>
+  <div class="row" style="margin-bottom:6px; font-weight:bold">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <app-message-board  [messageSource] = "{msgSource: this.messageObservable()}"></app-message-board>
+    </div>
+  </div>
+  <div>
+    <button class="btn btn-primary" style="margin-right:10px" (click)="displayInfo('drawnNumber')">Drawn Number</button>
+    <button class="btn btn-primary" (click)="displayInfo('mega')">Mega</button>
+  </div>
+
+  <div style="margin-top:5px; margin-bottom:10px" *ngIf="displayMode === 'drawnNumber'">
+
+    <div class="row" >
+      <div class="col-xs-12 col-md-12 col-lg-12">
+         
+        <app-number-quadrant-manager [refreshMode]="true"></app-number-quadrant-manager>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showNumberSelectionPanel">
+    <div *ngIf="displayMode === 'mega'">
+      <app-mega-manager></app-mega-manager>
+    </div>
+    <h3><span [ngClass]="{
+              'glyphicon': true,
+              'glyphicon-menu-up': showTicketNumberInputControl,
+              'glyphicon-menu-down': !showTicketNumberInputControl}"
+              aria-hidden="true"
+              (click)="toggleTicketNumberInput()"
+              ></span>Selected numbers:</h3>
+    <div class="row">
+      <div class="col-xs-12 col-md-12 col-lg-12">
+        <app-selected-number-manager [displayTicketNumberInput]="showTicketNumberInputControl">
+
+        </app-selected-number-manager>
+
+      </div>
+    </div>
+
+  </div>
+
+
+
+
