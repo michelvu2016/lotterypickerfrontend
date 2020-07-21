@@ -3,8 +3,9 @@
 </h4>
   <app-number-control
     *ngFor="let num of currentDrawnNumbers; let i=index"
+    [number]="num"
     [cssClassName]="'drawn_number drawnNumber_'+(i+1)"
-    [displayColorClass]="'drawn_number drawnNumber_'+(i+1)" [number]="num"
+    [displayColorClass]="'drawn_number drawnNumber_'+(i+1)" 
     style="margin-right:10px;"
 
   >

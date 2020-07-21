@@ -32,7 +32,10 @@ import { StoreModule } from '@ngrx/store';
 import { highlightCurDrawnNumbersReducer } from './store/reducers/highlightCurDrawnNumbersReducer';
 import { selectedNumbersReducer } from './store/reducers/selected-numbers.reducer';
 import { NumberQuadrantAnalysisCompoennt } from './number-panel/number-quadrant-analysis/number-quadrant-analysis.component';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule}  from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
 
 
 @NgModule({
@@ -71,7 +74,13 @@ import { NumberQuadrantAnalysisCompoennt } from './number-panel/number-quadrant-
       highlightCurDrawnNumber: highlightCurDrawnNumbersReducer,
       selectedNumbers: selectedNumbersReducer,
     }),
-    MeganumberModule
+    MeganumberModule,
+    BrowserAnimationsModule,
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+       maxAge: 25,
+       logOnly: environment.production,
+    })
 
 
   ],

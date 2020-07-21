@@ -312,7 +312,7 @@ export class SelectedNumberService {
      const newNumWithDelta = newNumber  < 10 ?  '0' + newNumber : ''+newNumber;
      const newNumberString = this.commonService.pullNumberOut(newNumWithDelta);
 
-     console.log(">>>delta check ", newNumber, newNumWithDelta,newNumberString, "ticket:", ticket);
+     //console.log(">>>delta check ", newNumber, newNumWithDelta,newNumberString, "ticket:", ticket);
 
      return _.includes(ticket, newNumberString);
   }

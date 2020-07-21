@@ -380,7 +380,7 @@ export class NumberPanelService
        };
 
        const numberCell = source.pipe(
-         tap(ev => console.log(ev)),
+        tap(ev => console.log(`>>>setupDrwanNumberObservable ${ev}`)),
          mapTo(
 
            testingfunc()
@@ -402,6 +402,8 @@ export class NumberPanelService
    {
       setTimeout(() => {
           this.currentDrawnNumberBroadcastQ.forEach((value) => {
+              //console.log(`>>>triggerCurrentDrawnNumberObservable class: ${value.cssClass} number: ${value.dNumber}`)
+
               callback(value);
           });
       }, 200);

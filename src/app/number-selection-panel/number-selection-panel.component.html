@@ -20,11 +20,13 @@
        <app-number-quadrant-analysis></app-number-quadrant-analysis>
      </div>
    </div>
-  <div class="row" style="margin-bottom:6px; font-weight:bold">
+  
+   <div class="row" style="margin-bottom:6px; font-weight:bold">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <app-message-board  [messageSource] = "{msgSource: this.messageObservable()}"></app-message-board>
     </div>
   </div>
+
   <div>
     <button class="btn btn-primary" style="margin-right:10px" (click)="displayInfo('drawnNumber')">Drawn Number</button>
     <button class="btn btn-primary" (click)="displayInfo('mega')">Mega</button>

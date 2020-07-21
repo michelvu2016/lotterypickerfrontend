@@ -1,4 +1,4 @@
-import {throwInvalidRefError} from '@angular/core/src/render3/styling/util';
+//import {throwInvalidRefError} from '@angular/core/src/render3/styling/util';
 import {interval} from 'rxjs';
 import {delay, map, mapTo, take, timeout} from 'rxjs/operators';
 
@@ -21,7 +21,7 @@ export class AsynchProcessExecutorService {
       const oper = (baton) => {
         //console.log(">>>Invoke foreign function");
         func(baton).then((resp) => {
-          console.log('>>>Receive response:', resp);
+         // console.log('>>>Receive response:', resp);
             if (resp.status === 'pending') {
                 const myBaton = resp.baton;
           //      console.log('>>>Call the function again with baton:', myBaton);

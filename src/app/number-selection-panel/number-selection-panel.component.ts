@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import {NumberPanelService} from '../number-panel/number-panel.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, delay } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import { HighlightCurrDrawnNumbersAction } from '../store/actions/HighlightCurrDrawnNumbersAction';
+import * as  fromHighlightCurrDrawnNumbersAction from '../store/actions/HighlightCurrDrawnNumbersAction';
+import * as  fromHighlightCurrDrawnNumbersSelectors from '../store/selectors/LotteryNumberSelectors';
 import * as constants from '../constants/constants';
 
 @Component({
@@ -11,7 +12,7 @@ import * as constants from '../constants/constants';
   templateUrl: './number-selection-panel.component.html',
   styleUrls: ['./number-selection-panel.component.css']
 })
-export class NumberSelectionPanelComponent implements OnInit {
+export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
 
   gameName: string;
   highLightNumberInPanel = true;
@@ -27,7 +28,7 @@ export class NumberSelectionPanelComponent implements OnInit {
 
   constructor(private numberPanelService: NumberPanelService,
     private currentRoute: ActivatedRoute, private router: Router,
-    private store: Store<{ highlightCurDrawnNumber: boolean }>
+    private store: Store<fromHighlightCurrDrawnNumbersAction.HighlightState>
               ) { }
 
   /**
@@ -46,20 +47,28 @@ export class NumberSelectionPanelComponent implements OnInit {
       //console.log(">>>>State from the store:", state);
     });
 
-    this.store.pipe(select('highlightCurDrawnNumber')).subscribe(flag => {
+    this.store.pipe(select(fromHighlightCurrDrawnNumbersSelectors.selectHighlightCurrDrawnNumbers)).subscribe(flag => {
       //console.log(">>>>The highlight flag:", flag);
     });
 
     this.setHighlightButtonLabel();
 
-    this.numberPanelService.numberPanelDisplayConpleteSubject.subscribe(() => {
+    this.numberPanelService.numberPanelDisplayConpleteSubject.pipe(
+       delay(100)
+    ).
+    subscribe(() => {
       this.showNumberSelectionPanel = true;
     });
 
+    //this.toggleHighlightNumberInPanel()
   }
 
   toggleTicketNumberInput() {
     this.showTicketNumberInputControl = !this.showTicketNumberInputControl;
+  }
+
+  ngAfterViewInit() {
+    this.dispatchHighLightFlagValue(this.highLightNumberInPanel);
   }
 
   /**
@@ -87,9 +96,18 @@ export class NumberSelectionPanelComponent implements OnInit {
   toggleHighlightNumberInPanel() {
     this.highLightNumberInPanel = !this.highLightNumberInPanel;
     this.setHighlightButtonLabel();
-    const highlightCurrDrawnNumbersAction = new HighlightCurrDrawnNumbersAction();
-    highlightCurrDrawnNumbersAction.type = constants.UPDATE_HIGHLIGHT_CURR_NUMBERS;
-    highlightCurrDrawnNumbersAction.highlightCurrentDrawnNumber = this.highLightNumberInPanel;
-    this.store.dispatch(highlightCurrDrawnNumbersAction);
+    this.dispatchHighLightFlagValue(this.highLightNumberInPanel);
   }
+
+  /**
+   * 
+   * @param flagValue 
+   */
+ private dispatchHighLightFlagValue(flagValue: boolean) {
+  const action = fromHighlightCurrDrawnNumbersAction.highlightCurrDrawnNumbersAction({highlightCurrentDrawnNumber: flagValue});
+  //highlightCurrDrawnNumbersAction.type = constants.UPDATE_HIGHLIGHT_CURR_NUMBERS;
+  //highlightCurrDrawnNumbersAction.highlightCurrentDrawnNumber = this.highLightNumberInPanel;
+  this.store.dispatch(action);
+ }
+
 }

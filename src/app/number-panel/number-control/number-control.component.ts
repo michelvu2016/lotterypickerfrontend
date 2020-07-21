@@ -1,4 +1,4 @@
-import {AfterContentInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
+import {AfterContentInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild, AfterViewInit} from '@angular/core';
 import {NumberPanelService} from '../number-panel.service';
 import {fromEvent} from 'rxjs';
 import {take} from 'rxjs/operators';
@@ -13,7 +13,7 @@ const defaultHighlightClass = 'visitNumber';
   templateUrl: './number-control.component.html',
   styleUrls: ['./number-control.component.css']
 })
-export class NumberControlComponent implements OnInit, AfterContentInit {
+export class NumberControlComponent implements OnInit, AfterContentInit, AfterViewInit {
 
   mouseIn = false;
 
@@ -30,7 +30,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit {
 
   @Input('cssClassName')
   set cssClassName(className) {
-
+    //console.log(`>>>NumberControlComponent set class: ${className} --- number: ${this.number}` )
     this.numberPanelService.currentDrawnNumberBroadcastQ.push({
         dNumber: this.number,
         cssClass: className
@@ -79,7 +79,11 @@ export class NumberControlComponent implements OnInit, AfterContentInit {
    *
    */
   ngAfterContentInit(): void {
-      this.displayNumber()
+      
+  }
+
+  ngAfterViewInit() {
+    this.displayNumber();
   }
 
   mouseOver()

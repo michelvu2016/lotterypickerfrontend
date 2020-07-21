@@ -34,7 +34,7 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit {
 
 
   private init() {
-    console.log(">>>number-quadrant-analysis - init() - call service to get analysis.");
+    //console.log(">>>number-quadrant-analysis - init() - call service to get analysis.");
     this.ticketNumberQuadrantAnalysisResult = "";
 
     const tkNumberOccurDetailLambda = (result: TicketInQuadrantAnalysisResultReader) => {

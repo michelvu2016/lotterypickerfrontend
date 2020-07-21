@@ -5,7 +5,7 @@
 
 .drawn_number_in_panel {
   font-size: 10pt;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .drawn_number_background {
@@ -14,27 +14,27 @@
 
 .drawnNumber_1 {
   color: red;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .drawnNumber_2 {
   color: blue;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .drawnNumber_3 {
   color:green;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .drawnNumber_4 {
   color: chocolate;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .drawnNumber_5 {
   color:maroon ;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .visitNumber {
@@ -47,7 +47,7 @@
 .normalNumber {
   color:black;
 
-  font-wight:bold;
+  font-weight:normal;
 
 }
 
@@ -88,8 +88,11 @@
 }
 
 .pastDrawnNumber {
-  font-weight: bold;
+  font-weight: normal;
   font-size: 11pt;
   color: black;
   background: white;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

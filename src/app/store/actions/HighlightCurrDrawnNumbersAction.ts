@@ -1,8 +1,15 @@
-import { Action } from '@ngrx/store';
+import { Action, createAction, props } from '@ngrx/store';
 
-
-export class HighlightCurrDrawnNumbersAction implements Action {
-  type: string;
+export interface HighlightState {
   highlightCurrentDrawnNumber: boolean;
-    
 }
+
+export const highlightCurrDrawnNumbersAction = 
+    createAction('[Current_Drawn_Number Component] UpdateHighLightFlag',
+          props<HighlightState>());
+
+// export class HighlightCurrDrawnNumbersAction implements Action {
+//   type: string;
+//   highlightCurrentDrawnNumber: boolean;
+    
+// }

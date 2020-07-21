@@ -3,7 +3,7 @@ import {NumberPanelService} from '../number-panel/number-panel.service';
 import {Observable, Subscription} from 'rxjs';
 import _ from 'lodash';
 import {SelectedNumberService} from './selected-number-service';
-import {el} from '@angular/platform-browser/testing/src/browser_util';
+//import {el} from '@angular/platform-browser/testing/src/browser_util';
 import {CommonServices} from '../common/common.services';
 
 @Component({

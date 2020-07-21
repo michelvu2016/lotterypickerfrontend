@@ -9,7 +9,8 @@ import {Observer} from 'rxjs';
 import {CommonServices} from '../../common/common.services';
 import { Store, select } from '@ngrx/store';
 import { SelectedNumbers } from '../../models/SelectedNumbers';
-
+import * as highlightCurDrawnNumbers from '../../store/actions/HighlightCurrDrawnNumbersAction';
+import * as highlightCurDrawnNumbersSelector from '../../store/selectors/LotteryNumberSelectors';
 
 
 @Component({
@@ -29,7 +30,7 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
   highlightCurrentDrawnNumber: boolean = true;
 
   constructor(private numberPanelService: NumberPanelService, private commonService: CommonServices,
-    private highlightCurDrawnNumberStore: Store<{ highlightCurDrawnNumber: boolean }>,
+    private highlightCurDrawnNumberStore: Store<highlightCurDrawnNumbers.HighlightState>,
     private commonServices: CommonServices,
     private selectedNumbersStore: Store<{ selectedNumbers: { selectedNumbers: { ticketId: SelectedNumbers } } }>
     ) {
@@ -50,15 +51,13 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
     //this.highlightDrawnNumbers();
 
     this.numberPanelService.registerProposedSelectingTicketObserver('number_quadrant' + this.index, this.proposedTicketAnalyzingObserver());
-
-    this.highlightCurDrawnNumberStore.pipe(select('highlightCurDrawnNumber')).subscribe(flag => {
-      this.highlightCurrentDrawnNumber = flag;
-      //console.log(">>>>number-quadrant.component - number highlight flag:", flag);
-      this.refreshNumberCurrentDrawnNumberHighLight();
-    });
+    
+    
 
     this.observeSelectedNumbers();
   }
+
+  
 
   /**
    *
@@ -110,9 +109,10 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
   observeSelectedNumbers() {
     this.selectedNumbersStore.pipe(select('selectedNumbers')).subscribe(
       selectedNumbers => {
-        const ticketSet = selectedNumbers.selectedNumbers
-        //console.log(">>>>number-quadrant.component - seleted number observer - selectedNumbers:", ticketSet);
-        Object.keys(ticketSet).forEach(key => {
+        if (selectedNumbers) {
+          const ticketSet = selectedNumbers.selectedNumbers
+          //console.log(">>>>number-quadrant.component - seleted number observer - selectedNumbers:", ticketSet);
+          Object.keys(ticketSet).forEach(key => {
           const selNumber = ticketSet[key];
           //console.log(">>>>number-quadrant.component - seleted number observer - numbers:", selNumber.numbers);
           //console.log(">>>>number-quadrant.component - seleted number observer - should highlight", selNumber.shouldHighlightNumbers);
@@ -121,7 +121,9 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
             this.highLightNumberInPanel(num, ++num_position, selNumber.shouldHighlightNumbers);
             });
 
-        })
+          })
+        }
+
 
        // 
 
@@ -219,22 +221,30 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
 
      this.refreshNumberCurrentDrawnNumberHighLight();
      this.doneDisplayNumber.emit(this.index)
+     this.highlightCurDrawnNumberStore.pipe(select(highlightCurDrawnNumbersSelector.selectHighlightCurrDrawnNumbers)).subscribe(flag => {
+      this.highlightCurrentDrawnNumber = flag;
+      console.log(">>>>number-quadrant.component - number highlight flag:", flag);
+      this.refreshNumberCurrentDrawnNumberHighLight();
+    });
    }
 
   /**
    *
    */
   refreshNumberCurrentDrawnNumberHighLight() {
+    //console.log(">>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. entry");
     this.numberPanelService.triggerCurrentDrawnNumberObservable((value) => {
       let highLightClass = "pastDrawnNumber";
       if (this.highlightCurrentDrawnNumber) {
         highLightClass = 'drawn_number_background ' + 'drawn_number_in_panel ' + value.cssClass;
       }
-
-      //console.log(">>>>>highLightClass>>>>:", highLightClass);
+      //console.log(">>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. >>>>>highLightClass>>>>:", highLightClass);
+      
 
       this.numberControlComponents.forEach(comp => {
+        //console.log(`>>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. comp.number ${comp.number} value.dNumber ${value.dNumber}`);
         if (comp.number === value.dNumber) {
+          console.log(">>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. Invoke displayColorClass on numberControlComponents", highLightClass);
           comp.displayColorClass = highLightClass;
           comp.displayNumber();
 
