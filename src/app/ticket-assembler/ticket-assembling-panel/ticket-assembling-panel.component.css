@@ -1,0 +1,16 @@
+.ticket-selection-panel {
+    position: absolute;
+    top: 50px;
+    left: 100px;
+    width: 50%;
+    height: 100px;
+    background-color: black;
+    opacity: .8;
+    color: white;
+    z-index: 300;
+    padding: 10px;
+    box-sizing: border-box;
+    display:grid;
+    justify-content: center;
+    
+}

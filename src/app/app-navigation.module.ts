@@ -3,6 +3,8 @@ import {NavigationComponent} from './navigation/navigation.component';
 import {NavigationControllerDirective} from './navigation/navigation-controller.directive';
 import {BrowserModule} from '@angular/platform-browser';
 import { NavbarOperationDirective } from './navigation/navbar-operation.directive';
+import { CommonMdules } from './common.mdules';
+
 
 
 
@@ -11,6 +13,7 @@ import { NavbarOperationDirective } from './navigation/navbar-operation.directiv
     NavigationComponent,
     NavigationControllerDirective,
     NavbarOperationDirective,
+   
   ],
   exports: [
     NavigationComponent,
@@ -18,7 +21,8 @@ import { NavbarOperationDirective } from './navigation/navbar-operation.directiv
     NavbarOperationDirective,
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    
   ]
 })
 export class AppNavigationModule {

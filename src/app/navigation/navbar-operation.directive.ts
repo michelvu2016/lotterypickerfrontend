@@ -1,5 +1,6 @@
 import { Directive, Input, ElementRef, Renderer2, HostListener, Output, EventEmitter } from '@angular/core';
 import { NavigationEventTriggerConfig } from '../constants/constants';
+import { of, timer } from 'rxjs';
 
 
 @Directive({
@@ -40,7 +41,10 @@ export class NavbarOperationDirective {
       menuName: this._menuName,
       eventName: 'mouseout'
    };
-   this.menuActiveEvent.emit(event);
+   timer(200).subscribe(() => 
+    this.menuActiveEvent.emit(event)
+   ) ;
+    
   }
 
 }

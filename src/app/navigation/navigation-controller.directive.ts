@@ -6,11 +6,14 @@ import { NavigationEventTriggerConfig } from '../constants/constants';
 
 const SHOW_DROPDOWN_CLASS = 'show';
 
+
+
 @Directive({
    selector: '[appNavigationController]'
 })
 export class NavigationControllerDirective implements OnInit, OnDestroy, AfterViewInit {
 
+  private mouseCaptured = false;
   private dropdownShown = false;
   private _menuName : string;
   private toppLevenMenuEventEmitter = new EventEmitter<string>();
@@ -34,7 +37,8 @@ export class NavigationControllerDirective implements OnInit, OnDestroy, AfterVi
            if (menuEvent.eventName == 'mouseover') {
             this.openDropDown();
            } else if (menuEvent.eventName == 'mouseout') {
-             this.closeDropDown();
+             if(!this.mouseCaptured)
+                this.closeDropDown();
            }
         }
 
@@ -53,7 +57,7 @@ export class NavigationControllerDirective implements OnInit, OnDestroy, AfterVi
   onMouseOver(eventData: Event) {
 
      this.openDropDown();
-      
+     this.mouseCaptured = true; 
     }
 
   @HostListener('mouseout')
@@ -61,7 +65,7 @@ export class NavigationControllerDirective implements OnInit, OnDestroy, AfterVi
   onMouseOut(eventData: Event) {
 
     this.closeDropDown();
-
+    this.mouseCaptured = false; 
   }
 
   private openDropDown() {

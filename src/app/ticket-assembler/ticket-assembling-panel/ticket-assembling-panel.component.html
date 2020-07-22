@@ -1,0 +1,18 @@
+<div class="ticket-selection-panel">
+    <h3>Ticket selection panel</h3>
+    <div>
+        <div>
+            <span>Ticket:</span>
+            <app-number-control
+            *ngFor="let num of numberInTicket; let i=index"
+            [number]="num"
+           
+            [displayColorClass]="'selecting-ticket-number'"
+            style="margin-right:10px;"
+        
+          >
+        
+          </app-number-control>
+        </div>
+    </div>
+</div>

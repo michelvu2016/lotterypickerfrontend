@@ -48,7 +48,8 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-     //console.log()
+
+     console.log("[SelectedNumberComponent] onchanges:",changes);
   }
 
   currentNumberIndex() {
@@ -73,16 +74,22 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges {
 
   drop(event: CdkDragDrop<string[]>) {
     if(event.previousContainer === event.container) {
+      console.log(`>>>moveItemInArray data: ${event.container.data} 
+              prevIndex: ${event.previousIndex} curIndex ${event.currentIndex}`);
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      console.log(`>>>transferArrayItem prevData: ${event.previousContainer.data} 
+          data: ${event.container.data} prevIndex ${event.previousIndex}
+           curIndex: ${event.currentIndex}`);
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex, event.currentIndex);
+        console.log("[SelectedNumberComponent] numbers:", this.numbers);
     }
   }
 
   onTicketNumberClick(event:any) {
-
+     console.log(">>>[SelectedNumberComponent] onTicketNumberClick: ", event);
   }
 
   mouseOverNumber() {

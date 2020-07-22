@@ -3,6 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 
 import { NavigationEventTriggerConfig } from '../constants/constants';
 
+
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
@@ -11,7 +12,7 @@ import { NavigationEventTriggerConfig } from '../constants/constants';
 export class NavigationComponent implements OnInit, AfterViewInit {
 
 
-  @ViewChild('updateDrawnData') updateDrawnDataSubMenuRef: ElementRef;
+
 
   lotteryTypesMap = new Map<string, string>(
     [
@@ -33,8 +34,11 @@ export class NavigationComponent implements OnInit, AfterViewInit {
 
 }
 
+onClick(elm: any) {
+  console.log("[NavigationComponent] passed element: ", elm);
+}
+
 ngAfterViewInit() {
-  console.log("[NavigationComponent] ngAfterViewInit submenuRef: ", this.updateDrawnDataSubMenuRef);
 }
 
   /**

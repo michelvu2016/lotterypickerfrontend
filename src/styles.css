@@ -94,5 +94,10 @@
   background: white;
 }
 
+.selecting-ticket-number {
+   font-size: 1.2em;
+   color: white;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

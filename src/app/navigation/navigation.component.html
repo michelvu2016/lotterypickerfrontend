@@ -16,12 +16,14 @@
         <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Update Drawn Data
         </a>
-        <div class="dropdown-menu menu-item"  aria-labelledby="navbarDropdown" #updateDrawnData 
+        <div class="dropdown-menu"  aria-labelledby="navbarDropdown"
             [appNavigationController]="{menuName: 'updateDrawnData', eventEmitter: this.menuTriggerRelayEventEmitter}"
             
             >
 
-          <li class="dropdown-item" *ngFor="let typeKey of lotteryTypeKeys(); let i = index;"><a (click)="updateDrawnData(typeKey)">{{lotteryTypeLabel(typeKey)}}</a></li>
+          <li class="dropdown-item" *ngFor="let typeKey of lotteryTypeKeys(); let i = index;"><a 
+            class="app-menu-item"
+            (click)="updateDrawnData(typeKey)">{{lotteryTypeLabel(typeKey)}}</a></li>
 
         </div>
       </li>
