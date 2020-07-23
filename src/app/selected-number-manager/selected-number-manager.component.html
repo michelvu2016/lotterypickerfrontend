@@ -14,6 +14,11 @@
   <li class="list-group-item"
       *ngFor="let ticket of selectedNumberTicket; let i = index"
       >
-    <app-selected-number [numbers]="ticket" [ticketNumber]="i" [ticketId]="i"></app-selected-number>
+    <app-selected-number [numbers]="ticket" 
+        [ticketNumber]="i" [ticketId]="i"
+        (click)="onClickSelectedNumberComp(selectedNumberComp)"
+        #selectedNumberComp>
+
+    </app-selected-number>
   </li>
 </ul>

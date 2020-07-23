@@ -30,13 +30,14 @@ import { CommonMdules } from './common.mdules';
 import { analyzedNumbersReducer } from './store/reducers/analyzed-number.reducer';
 import { StoreModule } from '@ngrx/store';
 import { highlightCurDrawnNumbersReducer } from './store/reducers/highlightCurDrawnNumbersReducer';
-import { selectedNumbersReducer } from './store/reducers/selected-numbers.reducer';
+import { selectedNumbersReducer, ticketSelectingReducer } from './store/reducers/selected-numbers.reducer';
 import { NumberQuadrantAnalysisCompoennt } from './number-panel/number-quadrant-analysis/number-quadrant-analysis.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule}  from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.module';
+
 
 
 @NgModule({
@@ -56,6 +57,7 @@ import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.modul
     NumberSelectionPanelComponent,
     HomeComponent,
     NumberQuadrantAnalysisCompoennt,
+   
 
 
   ],
@@ -74,6 +76,7 @@ import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.modul
       analyzedNumber: analyzedNumbersReducer,
       highlightCurDrawnNumber: highlightCurDrawnNumbersReducer,
       selectedNumbers: selectedNumbersReducer,
+      selectedTicket: ticketSelectingReducer,
     }),
     MeganumberModule,
     BrowserAnimationsModule,

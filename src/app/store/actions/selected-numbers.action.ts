@@ -1,4 +1,4 @@
-import { Action } from '@ngrx/store';
+import { Action, createAction, props } from '@ngrx/store';
 import { SelectedNumbers } from '../../models/SelectedNumbers';
 import * as constants from '../../constants/constants';
 
@@ -16,3 +16,14 @@ export class SelectedNumbersAction implements Action {
     
   }
 }
+
+export interface TicketState {
+  selectedNumber: string[];
+
+}
+
+export const ticketSelectingAction = createAction(
+  "[selected-number component] save",
+  props<TicketState>()
+
+);

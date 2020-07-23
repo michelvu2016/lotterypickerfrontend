@@ -1,5 +1,6 @@
-import { SelectedNumbersAction } from "../actions/selected-numbers.action";
+import { SelectedNumbersAction, TicketState, ticketSelectingAction } from "../actions/selected-numbers.action";
 import * as constants from '../../constants/constants';
+import { createReducer, on } from '@ngrx/store';
 
 const initialState = {
   selectedNumbers: {},
@@ -21,4 +22,21 @@ export function selectedNumbersReducer(state = initialState, action: SelectedNum
 
   }
   return newState;
+}
+
+const initialSelectedTicketState : TicketState = {
+  selectedNumber: []
+};
+
+const _ticketSelectingReducer = createReducer(initialSelectedTicketState,
+  on(ticketSelectingAction, (state, action) => {
+     console.log("[ticketSelectingReducer] invoked: ", action.selectedNumber);
+    return ({...state, selectedNumber: action.selectedNumber}) 
+  })
+   );
+
+
+  //Return the reducer
+export function ticketSelectingReducer(state, action) {
+   return _ticketSelectingReducer(state, action);
 }

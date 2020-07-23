@@ -5,6 +5,7 @@ import _ from 'lodash';
 import {SelectedNumberService} from './selected-number-service';
 //import {el} from '@angular/platform-browser/testing/src/browser_util';
 import {CommonServices} from '../common/common.services';
+import { SelectedNumberComponent } from '../selected-number/selected-number.component';
 
 @Component({
   selector: 'app-selected-number-manager',
@@ -232,6 +233,15 @@ export class SelectedNumberManagerComponent implements OnInit, OnDestroy {
   onKeyDownCheck(event: KeyboardEvent) {
     //console.log(">>>Trapping key down:", event);
 
+  }
+
+  /**
+   * 
+   * @param comp 
+   */
+  onClickSelectedNumberComp(comp: SelectedNumberComponent ) {
+    //console.log(">>[SelectedNumberManagerComponent] onClickSelectedNumberComp: ", comp);
+    comp.componentSelected();
   }
 
 }
