@@ -1,18 +1,41 @@
-<div class="ticket-selection-panel">
-    <h3>Ticket selection panel</h3>
-    <div>
+<div class="panel ticket-selection-panel" cdkDrag>
+    <div class="panel ticketInfo">
+        <h3 class="panel heading">Ticket selection panel</h3>
         <div>
+            <button class="btn btn-primary" (click)="highlightTicketInPanels()">High Light</button>
+            <button class="btn btn-primary" (click)="clearHighlightTicketInPanels()">Clear Hi Light</button>
+        </div>
+        <div class="panel ticketData">
             <span>Ticket:</span>
-            <app-number-control
-            *ngFor="let num of numberInTicket; let i=index"
-            [number]="num"
-           
-            [displayColorClass]="'selecting-ticket-number'"
-            style="margin-right:10px;"
+            <span>
+                <app-number-control 
+                *ngFor="let num of numberInTicket; let i=index"
+                [number]="num"
         
-          >
+                [displayColorClass]="'selecting-ticket-number'"
+                style="margin-right:10px;"
+                >
         
-          </app-number-control>
+                </app-number-control>
+            </span>
+        </div>
+        
+    </div>
+
+    <div class="panel ticketAnalysis">
+        <div>Ticket Analysis</div>
+        <div class="panel ticketAnalysis-details">
+            <span><app-number-quadrant-analysis
+                [fieldLabel]="''"
+                [displayClass]="'number-panel-analysis-medium'"
+                >
+
+            </app-number-quadrant-analysis></span>
+            <!--
+                <span *ngFor="let item of this.getTicketAnalysis()" >{{item}}</span>
+            -->
+            
         </div>
     </div>
+
 </div>

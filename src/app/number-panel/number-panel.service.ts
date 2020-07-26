@@ -194,6 +194,7 @@ export class NumberPanelService
         this.setupTheMega(jsonData);
         this.currentDrawnNumber = jsonData.lastDrawnNumberList;
         this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
+        this.currentDrawnNumberObservable.complete();
         //console.log(">>>current drawn number:", this.currentDrawnNumber);
         this.setupClickUpdate();
         this.setupMessageObservable();
@@ -484,4 +485,21 @@ export class NumberPanelService
   getLast25Mega() {
     return this._last25Mega.slice();
   }
+
+  /**
+   * 
+   */
+  getCurrentDrawnTicket(): Promise<string[]> {
+      return new Promise((resolve, reject) => {
+        if (!this.currentDrawnNumber) {
+          this.currentDrawnNumberObservable.subscribe(
+            (item) => resolve(item),
+            (error) => {reject(error)}
+          )
+        } else {
+          resolve(this.currentDrawnNumber);
+        }
+      } )
+   }
+
 }

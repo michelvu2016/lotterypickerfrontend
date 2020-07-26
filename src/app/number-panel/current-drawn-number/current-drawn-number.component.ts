@@ -1,5 +1,7 @@
 import {AfterViewChecked, Component, OnInit, Output, EventEmitter, Input, AfterViewInit, OnChanges, SimpleChanges} from '@angular/core';
 import {NumberPanelService} from '../number-panel.service';
+import * as fromActions from '../../store/actions/selected-numbers.action';
+import { Store } from '@ngrx/store';
 
 
 @Component({
@@ -23,15 +25,29 @@ export class CurrentDrawnNumberComponent implements OnInit, AfterViewInit, OnCha
   currentDrawnNumbers: string[];
   @Output() notifyCurrentNumberEvent = new EventEmitter<string[]>();
 
-  constructor(private numberPanelService: NumberPanelService) { }
+  constructor(private numberPanelService: NumberPanelService,
+            private numberToBeHighLightStore: Store<fromActions.TicketToHighLightState>) { }
 
   ngOnInit() {
       const thisObj = this;
       this.numberPanelService.currentDrawnNumberObservable.subscribe({
          next(value) {thisObj.currentDrawnNumbers = value},
-         complete() {}
+         error() {},
+         complete() {
+          thisObj.sendNumberToHighLightInPanel();
+         }
       });
 
+  }
+
+  sendNumberToHighLightInPanel() {
+    const thisObj = this;
+    console.log(">>>[CurrentDrawnNumberComponent] ngOnInit dispatch current drawn number to store.")
+            this.numberToBeHighLightStore.dispatch(
+               fromActions.setHighlightTicketAction({
+                ticketNumbers: thisObj.currentDrawnNumbers.slice()
+               })
+            )
   }
 
   /**
@@ -47,6 +63,7 @@ export class CurrentDrawnNumberComponent implements OnInit, AfterViewInit, OnCha
    */
   ngAfterViewInit(): void {
     this.initComp();
+    
   }
 
   /**

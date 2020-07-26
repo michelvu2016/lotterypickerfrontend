@@ -1,4 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%; 
+  font-size: 11pt; 
+ }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
 .drawn_number {
   font-size: 13pt;
 }
@@ -21,6 +26,7 @@
   color: blue;
   font-size: 12pt;
 }
+
 
 .drawnNumber_3 {
   color:green;
@@ -99,5 +105,12 @@
    color: white;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.number-panel-analysis-small {
+  font-size: 9pt;
+}
+
+.number-panel-analysis-medium {
+  font-size: 11pt;
+}
+
+

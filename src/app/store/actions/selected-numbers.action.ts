@@ -1,6 +1,7 @@
 import { Action, createAction, props } from '@ngrx/store';
 import { SelectedNumbers } from '../../models/SelectedNumbers';
 import * as constants from '../../constants/constants';
+import { NumberSelectionPanelComponent } from 'src/app/number-selection-panel/number-selection-panel.component';
 
 export class SelectedNumbersAction implements Action {
   type: string;
@@ -18,12 +19,41 @@ export class SelectedNumbersAction implements Action {
 }
 
 export interface TicketState {
-  selectedNumber: string[];
+  selectedNumber: string[]
 
 }
+
+export interface TicketToHighLightState {
+  ticketNumbers: string[]
+}
+
+export interface SelectedHighLightNumberState {
+  
+}
+
+export interface AppState {
+    analyzedNumber: any,
+    highlightCurDrawnNumber: any,
+    selectedNumbers: any,
+    selectedTicket: TicketState,
+    ticketToHighLight: TicketToHighLightState,
+}
+
+
+
 
 export const ticketSelectingAction = createAction(
   "[selected-number component] save",
   props<TicketState>()
 
 );
+
+export const setHighlightTicketAction = createAction(
+  "[application-flow logic] set",
+  props<TicketToHighLightState>()
+)
+
+export const clearHightlightTicketAction = createAction(
+  "[NumberSelectionPanelComponent] component clear"
+);
+

@@ -1,0 +1,37 @@
+.drawnNumberBase {
+    padding: 1px;
+    box-sizing: border-box;
+    
+}
+
+.drawnNumber-1 {
+    color: red;
+    font-size: 12pt;
+    padding:2px;
+    border: 2px thick yellow;
+  }
+
+  
+  .drawnNumber-2 {
+    color: blue;
+    font-size: 12pt;
+
+  }
+  
+  
+  .drawnNumber-3 {
+    color:green;
+    font-size: 12pt;
+
+  }
+  
+  .drawnNumber-4 {
+    color: grey;
+    font-size: 12pt;
+
+  }
+  
+  .drawnNumber-5 {
+    color:maroon ;
+    font-size: 12pt;
+  }

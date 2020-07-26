@@ -4,8 +4,8 @@ import {fromEvent} from 'rxjs';
 import {take} from 'rxjs/operators';
 
 
-const defaultNormalClass = 'normalNumber';
-const defaultHighlightClass = 'visitNumber';
+const defaultNormalClass: string = 'normalNumber';
+const defaultHighlightClass: string = 'visitNumber';
 
 
 @Component({
@@ -119,7 +119,10 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
    * @param cssClassName
    */
   addCssClass(cssClassName: string) {
-    this.renderer.addClass(this.thisCompRef.nativeElement, cssClassName);
+    if(cssClassName) {
+       cssClassName.split(" ").forEach(cls => this.renderer.addClass(this.thisCompRef.nativeElement, cls))
+    }
+    
   }
 
   /**
@@ -127,22 +130,33 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
    * @param cssClassName
    */
   removeCssClass(cssClassName: string) {
-    this.renderer.removeClass(this.thisCompRef.nativeElement, cssClassName);
+    if(cssClassName) {
+      cssClassName.split(" ").forEach(cls => this.renderer.removeClass(this.thisCompRef.nativeElement, cls))
+    }
+    ;
   }
 
 
   highlight()
   {
-     defaultHighlightClass.split(' ').forEach((className) => {
-      this.renderer.addClass(this.thisCompRef.nativeElement, className);
-    });
+   
+        defaultHighlightClass.split(' ').forEach((className) => {
+        this.renderer.addClass(this.thisCompRef.nativeElement, className);
+         console.log(">>>[NumberControlComponent] highlight className:", className);
+        });
+
   }
 
   unhighlight()
   {
-    defaultHighlightClass.split(' ').forEach((className) => {
+    
+    
+      defaultHighlightClass.split(' ').forEach((className) => {
       this.renderer.removeClass(this.thisCompRef.nativeElement, className);
+      console.log(">>>[NumberControlComponent] unhighlight className: ", className);
     });
+
+
   }
 
   /**
@@ -151,7 +165,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
    * @param elementRef
    */
   private removeAllClasses(elementRef: ElementRef) {
-    //console.log(">>>>number-control.component - remove all classes");
+    console.log(">>>>number-control.component - remove all classes");
     const thisElm = elementRef.nativeElement;
     const classNames = elementRef.nativeElement.getAttribute('class')
     if (classNames && classNames.length) {
@@ -161,9 +175,11 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
     }
   } 
 
+
+
   displayNumber()
   {
-    this.removeAllClasses(this.thisCompRef);
+    //this.removeAllClasses(this.thisCompRef);
     //this.renderer.removeClass(this.thisCompRef.nativeElement, defaultNormalClass);
 
     if (this.displayColorClass != null) {

@@ -6,6 +6,9 @@ import { Store, select } from '@ngrx/store';
 import * as  fromHighlightCurrDrawnNumbersAction from '../store/actions/HighlightCurrDrawnNumbersAction';
 import * as  fromHighlightCurrDrawnNumbersSelectors from '../store/selectors/LotteryNumberSelectors';
 import * as constants from '../constants/constants';
+import * as fromActions from '../store/actions/selected-numbers.action';
+import { from } from 'rxjs';
+
 
 @Component({
   selector: 'app-number-selection-panel',
@@ -28,7 +31,8 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
 
   constructor(private numberPanelService: NumberPanelService,
     private currentRoute: ActivatedRoute, private router: Router,
-    private store: Store<fromHighlightCurrDrawnNumbersAction.HighlightState>
+    private store: Store<fromHighlightCurrDrawnNumbersAction.HighlightState>,
+    private ticketToBeHighLightedStore: Store<fromActions.AppState>
               ) { }
 
   /**
@@ -42,14 +46,6 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
          return this.numberPanelService.initThePanelData(this.gameName);
       })
     ).subscribe();
-
-    this.store.subscribe(state => {
-      //console.log(">>>>State from the store:", state);
-    });
-
-    this.store.pipe(select(fromHighlightCurrDrawnNumbersSelectors.selectHighlightCurrDrawnNumbers)).subscribe(flag => {
-      //console.log(">>>>The highlight flag:", flag);
-    });
 
     this.setHighlightButtonLabel();
 
@@ -68,7 +64,7 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dispatchHighLightFlagValue(this.highLightNumberInPanel);
+    //this.dispatchHighLightFlagValue(this.highLightNumberInPanel);
   }
 
   /**
@@ -96,18 +92,42 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
   toggleHighlightNumberInPanel() {
     this.highLightNumberInPanel = !this.highLightNumberInPanel;
     this.setHighlightButtonLabel();
-    this.dispatchHighLightFlagValue(this.highLightNumberInPanel);
+    this.updateTheTicketToBeHighlighed(this.highLightNumberInPanel);
+  }
+
+  /**
+   * 
+   */
+  private clearTheTicketToBeHighlighed() {
+    this.ticketToBeHighLightedStore.dispatch(
+        fromActions.clearHightlightTicketAction()
+    );
   }
 
   /**
    * 
    * @param flagValue 
    */
- private dispatchHighLightFlagValue(flagValue: boolean) {
-  const action = fromHighlightCurrDrawnNumbersAction.highlightCurrDrawnNumbersAction({highlightCurrentDrawnNumber: flagValue});
-  //highlightCurrDrawnNumbersAction.type = constants.UPDATE_HIGHLIGHT_CURR_NUMBERS;
-  //highlightCurrDrawnNumbersAction.highlightCurrentDrawnNumber = this.highLightNumberInPanel;
-  this.store.dispatch(action);
+ private setupTheTicketToBeHighlighed() {
+    this.numberPanelService.getCurrentDrawnTicket()
+          .then((numbers) => {
+              this.ticketToBeHighLightedStore.dispatch(
+                 fromActions.setHighlightTicketAction({
+                   ticketNumbers: numbers
+                 })
+              )
+          }).catch(error => {
+             //Error handling here
+          });
+
+    
+ }
+
+ private updateTheTicketToBeHighlighed(flag: boolean) {
+   if(flag)
+    this.setupTheTicketToBeHighlighed()
+  else 
+    this.clearTheTicketToBeHighlighed()
  }
 
 }

@@ -1,16 +1,62 @@
+.panel {
+    margin: 0;
+    padding: 0;
+}
+
 .ticket-selection-panel {
     position: absolute;
     top: 50px;
-    left: 100px;
-    width: 50%;
-    height: 100px;
+    left: 200px;
+    width: 60%;
+    height: 150px;
     background-color: black;
-    opacity: .8;
+    opacity: .6;
     color: white;
-    z-index: 300;
+    z-index: 3000;
     padding: 10px;
     box-sizing: border-box;
     display:grid;
-    justify-content: center;
+    grid-template: 1fr 1fr / 1fr;
     
+}
+
+.heading {
+
+    align-self: start;
+    justify-self: start;
+
+    margin:0;
+}
+
+.ticketInfo {
+    display: grid;
+    grid-template: 1fr 1fr/ 1fr 40%;
+    align-items: flex-start;
+
+}
+
+.ticketData {
+    display: inline;
+
+    grid-template: 1fr 1fr/ 1fr;
+    align-items: center;
+    justify-self: start;
+    justify-items: start;
+
+    background-color: blue;
+}
+
+.ticketAnalysis {
+    display: grid;
+
+}
+.ticketAnalysis-details {
+    display: grid;
+    
+}
+
+div.ticket-selection-panel  button {
+   margin-right: 3px;
+   color: black;
+   background-color: darkkhaki;
 }

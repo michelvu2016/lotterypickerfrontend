@@ -11,7 +11,9 @@ import { Store, select } from '@ngrx/store';
 import { SelectedNumbers } from '../../models/SelectedNumbers';
 import * as highlightCurDrawnNumbers from '../../store/actions/HighlightCurrDrawnNumbersAction';
 import * as highlightCurDrawnNumbersSelector from '../../store/selectors/LotteryNumberSelectors';
-
+import * as fromActions from '../../store/actions/selected-numbers.action';
+import * as fromSelectors from '../../store/selectors/LotteryNumberSelectors';
+import * as fromConstants from '../../constants/constants'
 
 @Component({
   selector: 'app-number-quadrant',
@@ -32,7 +34,8 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
   constructor(private numberPanelService: NumberPanelService, private commonService: CommonServices,
     private highlightCurDrawnNumberStore: Store<highlightCurDrawnNumbers.HighlightState>,
     private commonServices: CommonServices,
-    private selectedNumbersStore: Store<{ selectedNumbers: { selectedNumbers: { ticketId: SelectedNumbers } } }>
+    private selectedNumbersStore: Store<{ selectedNumbers: { selectedNumbers: { ticketId: SelectedNumbers } } }>,
+    private ticketToHighLightStore: Store<fromActions.AppState>
     ) {
     //this.initComponent();
   }
@@ -72,6 +75,8 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
     }
     return highLightClass;
   }
+
+  
 
   /**
    * 
@@ -219,13 +224,51 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
   // tslint:disable-next-line:use-life-cycle-interface
    ngAfterViewInit(): void {
 
-     this.refreshNumberCurrentDrawnNumberHighLight();
+     //this.refreshNumberCurrentDrawnNumberHighLight();
      this.doneDisplayNumber.emit(this.index)
-     this.highlightCurDrawnNumberStore.pipe(select(highlightCurDrawnNumbersSelector.selectHighlightCurrDrawnNumbers)).subscribe(flag => {
-      this.highlightCurrentDrawnNumber = flag;
-      console.log(">>>>number-quadrant.component - number highlight flag:", flag);
-      this.refreshNumberCurrentDrawnNumberHighLight();
-    });
+    //  this.highlightCurDrawnNumberStore.pipe(select(highlightCurDrawnNumbersSelector.selectHighlightCurrDrawnNumbers)).subscribe(flag => {
+    //   this.highlightCurrentDrawnNumber = flag;
+    //   console.log(">>>>number-quadrant.component - number highlight flag:", flag);
+    //   //this.refreshNumberCurrentDrawnNumberHighLight();
+
+    //});
+
+    this.new_highlightNumbersInPanel();
+   }
+
+   new_highlightNumbersInPanel() {
+        this.ticketToHighLightStore.pipe(
+           select(fromSelectors.selectTicketToHighLight)
+        ).subscribe(
+           numbers => {
+             if (numbers && numbers.length > 0) {
+                const longNumber = numbers[0]?.length > 2;
+                this.numberControlComponents.forEach(comp => {
+                  //console.log(`>>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. comp.number ${comp.number} value.dNumber ${value.dNumber}`);
+                  const index = numbers.indexOf(longNumber ? comp.number  : this.commonService.pullNumberOut(comp.number));
+                  if (index != -1) {
+                   
+                    const cls = fromConstants.ticketNumberHighLightCssClass(index);
+                    console.log(">>>[number-quadrant.component] add class to number comp:", cls);
+                    comp.addCssClass("drawnNumber-"+(index+1));
+                    //comp.displayNumber();
+          
+          
+                  }
+              });
+             } else {
+              const cls =  fromConstants.getClassesUsedForHighlighting();
+              console.log(">>>[NumberQuadrantComponent] remove class on number comp. class:", cls );
+              this.numberControlComponents.forEach(comp => {
+                
+                comp.removeCssClass(cls);
+              });
+               
+
+             }
+
+            }
+        )
    }
 
   /**
