@@ -16,21 +16,6 @@ import { SelectedNumberComponent } from '../selected-number/selected-number.comp
 export class SelectedNumberManagerComponent implements OnInit, OnDestroy {
   private selectedNumberSub: Subscription;
   selectedNumberTicket: string[][] = [];
-
-  @ViewChild("numberEnter") numberEnter: ElementRef 
-
-  ticketNumberInputData: string = "";
-  validInputTicketNumber = false;
-  ticketNumberMessage: string;
-
-  @Input()
-  set displayTicketNumberInput(value: boolean) {
-    //console.log(">>>>displayTicketNumberInput:", value);
-    this.showTicketNumberEntry = value;
-  }
-
-  showTicketNumberEntry = false;
-
   private selectedNumberTicketSub: Subscription;
 
   constructor(private numberPanelService: NumberPanelService, private selectedNumberService: SelectedNumberService,
@@ -155,78 +140,6 @@ export class SelectedNumberManagerComponent implements OnInit, OnDestroy {
     } else {
       return null;
     }
-  }
-
-  /**
-   *
-   **/
-  private getInputTicket(): string[] {
-    return this.stringToStringArrary(this.ticketNumberInputData);
-  }
-
-  onCheckInputNumber() {
-    if (!this.localTicketNumberValidation()) {
-      return;
-    }
-
-    const appendMessage = (msg, msgNumber) => {
-
-      if (msgNumber == 1) {
-        this.ticketNumberMessage = "";
-      }
-        if (this.ticketNumberMessage.length) {
-          this.ticketNumberMessage + "; "
-        }
-        this.ticketNumberMessage += msg;
-      
-    }
-
-    this.ticketNumberMessage = "Validing ticket....";
-    let msgNumber = 0;
-    this.selectedNumberService.
-      validateNumber(this.stringToStringArrary(this.ticketNumberInputData))
-      .subscribe(
-      
-        (msg) => {
-          msgNumber++;
-          appendMessage(msg, msgNumber);
-      }
-     );
-  }
-
-  /**
-   **/
-  onAcceptInputNumber() {
-    this.selectedNumberService.addTicketToBucket(this.getInputTicket()).then((msg) => {
-      this.ticketNumberInputData = "";
-      this.ticketNumberMessage = "";
-    });
-  }
-
-  onClearInputNumber() {
-    this.ticketNumberInputData = "";
-  }
-
-  localTicketNumberValidation(): boolean {
-    if (this.ticketNumberInputData.split(" ").length < 5) {
-      this.ticketNumberMessage = "Ticket is not valid to proceed";
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  private getTicketNumberInputValue() {
-    return this.numberEnter.nativeElement.value;
-  }
-
-  onTicketNUmberInputChange() {
-    if (this.ticketNumberInputData.split(" ").length >= 5) {
-      this.validInputTicketNumber = true;
-    } else {
-      this.validInputTicketNumber = false;
-    }
-    
   }
 
   @HostListener('window:keydown',['$event'])

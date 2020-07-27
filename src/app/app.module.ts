@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button'; 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NumberPanelComponent } from './number-panel/number-panel.component';
@@ -40,6 +41,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule}  from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.module';
+import { NumberInputFormComponent } from './selected-number-manager/number-input-form/number-input-form.component';
 
 
 
@@ -60,6 +62,7 @@ import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.modul
     NumberSelectionPanelComponent,
     HomeComponent,
     //NumberQuadrantAnalysisCompoennt,
+    NumberInputFormComponent,
    
 
 
@@ -90,7 +93,8 @@ import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.modul
        logOnly: environment.production,
     }),
 
-    TicketAssemblerModule
+    TicketAssemblerModule,
+    MatButtonModule,
   ],
   providers: [NumberPanelService, DataService, CommonServices, AsynchProcessExecutorService],
   exports: [

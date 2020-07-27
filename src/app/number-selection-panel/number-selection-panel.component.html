@@ -51,7 +51,7 @@
               
               ></span>
               
-              <h3
+              <h3 class="ticket-entry-input-toggle"
               (click)="toggleTicketNumberInput()"
               ><i class="material-icons"
                 *ngIf="!showTicketNumberInputControl"
@@ -62,7 +62,14 @@
                 Selected numbers:</h3>
     <div class="row">
       <div class="col-xs-12 col-md-12 col-lg-12">
-        <app-selected-number-manager [displayTicketNumberInput]="showTicketNumberInputControl">
+         <app-number-input-form [displayTicketNumberInput]="showTicketNumberInputControl">
+
+         </app-number-input-form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-md-12 col-lg-12">
+        <app-selected-number-manager >
 
         </app-selected-number-manager>
 

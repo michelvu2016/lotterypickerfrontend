@@ -1,15 +1,4 @@
-<div *ngIf="showTicketNumberEntry">
-  <label>Enter Number:</label>
-  <input type="text" name="ticketNumber" #numberEnter class="inputNumber"
-         [(ngModel)]="ticketNumberInputData"
-         (ngModelChange)="onTicketNUmberInputChange()"
-         
-  />
-  <button class="inputNumber" (click)="onCheckInputNumber()">Check</button>
-  <button class="inputNumber" (click)="onAcceptInputNumber()" [disabled]="!validInputTicketNumber">Accept</button>
-  <button class="inputNumber" (click)="onClearInputNumber()">Clear</button>
-  <span class="inputNumber">{{ticketNumberMessage}}</span>
-</div>
+
 <ul class="list-group">
   <li class="list-group-item"
       *ngFor="let ticket of selectedNumberTicket; let i = index"

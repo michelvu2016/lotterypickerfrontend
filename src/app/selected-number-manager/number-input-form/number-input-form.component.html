@@ -1,0 +1,21 @@
+<div *ngIf="showTicketNumberEntry" class="ticket-entry-form-container">
+    <label>Enter Number:</label>
+    <input type="text" name="ticketNumber" #numberEnter class="inputNumber"
+           [(ngModel)]="ticketNumberInputData"
+           (ngModelChange)="onTicketNUmberInputChange()"
+           
+    />
+    <button class="inputNumber" (click)="onCheckInputNumber()">Check</button>
+    <button class="inputNumber" (click)="onAcceptInputNumber()" [disabled]="!validInputTicketNumber">Accept</button>
+    <button class="inputNumber" (click)="onClearInputNumber()">Clear</button>
+    <button mat-raised-button color="primary" 
+              class="inputNumber" 
+              (click)="highlightInputNumber()"
+              [disabled]="this.ticketNumberInputData?.length == 0"
+       
+              #highlightButton
+              >Highlight number</button>
+    
+    
+    <span class="inputNumber">{{ticketNumberMessage}}</span>
+  </div>

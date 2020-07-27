@@ -7,3 +7,6 @@
 #controlToolBar button + button {
    margin-left: 3px;
 }
+.ticket-entry-input-toggle :hover {
+   cursor: pointer;
+}
