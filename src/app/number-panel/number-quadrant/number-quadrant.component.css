@@ -2,3 +2,12 @@
     border: 2px thin red;
     margin: 2px 2px 0 0;
 }
+
+.numberPanel {
+    border: 2px thin red; 
+    background-color: rgba(89, 89, 105, .6); 
+    padding:5px;
+    margin: 5px;
+    box-shadow: inset 2px 2px 4px black;
+    border-radius: 12px/25px;
+}

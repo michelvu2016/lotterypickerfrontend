@@ -17,6 +17,8 @@ type TicketQuadAnalysisResultReader =
 type TicketQuadAnalysisResultWriter = 
   TicketInQuadrantAnalysisResult.TicketInQuadrantAnalysisResultWriter;
 
+
+
 @Injectable()
 export class NumberPanelService
 {
@@ -102,6 +104,23 @@ export class NumberPanelService
 
   /**
    * 
+   * @param ticket 
+   * @param number 
+   */
+  private ticketContainsNumber(ticket: string[], number:string ) {
+    return ticket.find(tnumber => {
+      if(number.length > 2) {
+        return tnumber == number;
+     } else {
+       return tnumber.substring(0,2) == number;
+     }
+    }) != undefined;
+
+
+  }
+
+  /**
+   * 
    * @param ticketToCheck
    * @param forQuadrantNumber
    */
@@ -118,10 +137,14 @@ export class NumberPanelService
       const result = resultCreator(forQuadrantNumber);
       this.getTicketNumberForQuadrant(forQuadrantNumber).forEach(ticket => {
         ticketToCheck.forEach(number => {
-          if (ticket.includes(number)) {
+          if (this.ticketContainsNumber(ticket, number)) {
             result.addTkNumberOccurance(number);
             result.addNumberOfOccurance();
           }
+          // if (ticket.includes(number)) {
+          //   result.addTkNumberOccurance(number);
+          //   result.addNumberOfOccurance();
+          // }
         })
       });
       return result;

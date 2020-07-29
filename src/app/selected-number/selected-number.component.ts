@@ -103,6 +103,8 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   }
 
   remove() {
+    this.numbers = [];
+    this.updateSelectedTicketOnStore();
     this.selectedNumberService.removeTicket(this.ticketId);
   }
 

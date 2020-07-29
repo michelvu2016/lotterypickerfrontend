@@ -1,13 +1,14 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import {NumberPanelService} from '../number-panel/number-panel.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import { switchMap, delay } from 'rxjs/operators';
+import { switchMap, delay, take } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as  fromHighlightCurrDrawnNumbersAction from '../store/actions/HighlightCurrDrawnNumbersAction';
 import * as  fromHighlightCurrDrawnNumbersSelectors from '../store/selectors/LotteryNumberSelectors';
 import * as constants from '../constants/constants';
 import * as fromActions from '../store/actions/selected-numbers.action';
-import { from } from 'rxjs';
+import { from, Observable, of, forkJoin } from 'rxjs';
+
 
 
 @Component({
@@ -68,6 +69,15 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
   }
 
   /**
+   * 
+   */
+  getCurrentDrawnTicket() {
+
+     return from(this.numberPanelService.getCurrentDrawnTicket());
+
+  }
+
+  /**
    *
    * @param mega
    */
@@ -103,6 +113,8 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
         fromActions.clearHightlightTicketAction()
     );
   }
+
+
 
   /**
    * 

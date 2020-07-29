@@ -3,6 +3,9 @@ import { OnInit, Component, AfterViewInit, Input, ViewChild, ElementRef, Rendere
 import { NumberPanelService } from '../number-panel.service';
 import { TicketInQuadrantAnalysisResultReader } from '../../models/TicketInQuadrantAnalysisResult';
 import { CommonServices } from '../../common/common.services';
+import { Observable, of, from } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-number-quadrant-analysis',
@@ -22,6 +25,8 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
     this.label = name;
   }
 
+  @Input('ticketObs') ticketObs: Observable<string[]>;
+
   @Input('displayClass')
   set cssClassToUse(name: string) {
     this.displayClass = name;
@@ -37,22 +42,19 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
   /**
    **/
   ngOnInit(): void {
-
-      if (this.numberPanelService.isDataReady()) {
-        this.init();
-      } else {
-        this.numberPanelService.registerDataReadyNotification(() => {
-                this.init();
-              });
-    }
+     
+      
   }
 
+  
+
   ngAfterViewInit() {
+
+    this.configTicketInputObs();
 
     if(!this.displayClass || this.displayClass?.length == 0) {
        return;
     }
-
     const classesRetriever = (process) => {
       const numClass = this.widget.nativeElement?.className?.length;
         if(numClass && numClass > 1) {
@@ -75,11 +77,27 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
 
   }
   
+  private configTicketInputObs() {
+    console.log(">>>[NumberQuadrantAnalysisCompoennt] configTicketInputObs invoked:");
+      this.ticketObs.pipe(
+        tap(ticket => {
+                console.log(">>>[NumberQuadrantAnalysisCompoennt] ngAfterViewInit ticket for analysis:", ticket);
+        })
+    ).subscribe((ticket) => this.displayTheAnalysisData(ticket))
+  }
+  
 
+  /**
+   * 
+   * @param ticket 
+   */
+  private displayTheAnalysisData(ticket: string[]) {
 
-  private init() {
     //console.log(">>>number-quadrant-analysis - init() - call service to get analysis.");
     this.ticketNumberQuadrantAnalysisResult = "";
+
+    if(!ticket?.length)
+        return;
 
     const tkNumberOccurDetailLambda = (result: TicketInQuadrantAnalysisResultReader) => {
       const retResult: string[] = [];
@@ -90,7 +108,7 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
     }
 
     for (let quadNum = 0; quadNum < this.numberOfQuadrant; quadNum++) {
-      this.numberPanelService.ticketNumberOccurancesInQuadrant(this.numberPanelService.getLastFrawnNumbers(),
+      this.numberPanelService.ticketNumberOccurancesInQuadrant(ticket,
         quadNum, (result) => {
           return ` Q${result.getQuadrantNumber()}-${result.getNumberOfOccurances()}[${tkNumberOccurDetailLambda(result)}]`
 

@@ -25,12 +25,15 @@
     <div class="panel ticketAnalysis">
         <div>Ticket Analysis</div>
         <div class="panel ticketAnalysis-details">
+            
             <span><app-number-quadrant-analysis
                 [fieldLabel]="''"
                 [displayClass]="'number-panel-analysis-medium'"
+                [ticketObs] = "getTicketObs()"
                 >
 
             </app-number-quadrant-analysis></span>
+        
             <!--
                 <span *ngFor="let item of this.getTicketAnalysis()" >{{item}}</span>
             -->

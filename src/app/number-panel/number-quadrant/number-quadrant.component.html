@@ -1,5 +1,5 @@
-
-      <table class="table table-bordered text-center pastDrawnNumber panel-border">
+<div class="numberPanel" *ngIf="numberList?.length"> 
+<table class="table table-bordered text-center pastDrawnNumber panel-border">
         <tr *ngFor="let numberSet of numberList; let i = index">
           <td *ngFor="let num of numberSet; let j = index">
 
@@ -15,5 +15,8 @@
 
 
       </table>
+
+</div>
+      
 
 

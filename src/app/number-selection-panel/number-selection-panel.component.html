@@ -18,7 +18,9 @@
   
    <div class="row" *ngIf="showQuadrantAnalysis">
      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-       <app-number-quadrant-analysis></app-number-quadrant-analysis>
+       <app-number-quadrant-analysis
+       [ticketObs]= "getCurrentDrawnTicket()"
+       ></app-number-quadrant-analysis>
      </div>
    </div>
   
