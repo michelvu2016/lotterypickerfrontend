@@ -31,10 +31,13 @@ export class CurrentDrawnNumberComponent implements OnInit, AfterViewInit, OnCha
   ngOnInit() {
       const thisObj = this;
       this.numberPanelService.currentDrawnNumberObservable.subscribe({
-         next(value) {thisObj.currentDrawnNumbers = value},
+         next(value) {
+          console.log(">>>[CurrentDrawnNumberComponent] update currentDrawnNumbers:", value); 
+          thisObj.currentDrawnNumbers = value;
+          thisObj.sendNumberToHighLightInPanel();
+          },
          error() {},
          complete() {
-          thisObj.sendNumberToHighLightInPanel();
          }
       });
 
@@ -42,10 +45,11 @@ export class CurrentDrawnNumberComponent implements OnInit, AfterViewInit, OnCha
 
   sendNumberToHighLightInPanel() {
     const thisObj = this;
+    
     console.log(">>>[CurrentDrawnNumberComponent] ngOnInit dispatch current drawn number to store.")
             this.numberToBeHighLightStore.dispatch(
                fromActions.setHighlightTicketAction({
-                ticketNumbers: thisObj.currentDrawnNumbers.slice()
+                ticketNumbers: thisObj.currentDrawnNumbers?.slice()
                })
             )
   }

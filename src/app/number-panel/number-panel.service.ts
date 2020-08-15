@@ -199,7 +199,10 @@ export class NumberPanelService
    *
    */
   reset() {
-
+    this.drawnNumbers = [];
+    this.currentDrawnNumber = [];
+    this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
+    this.dataReadyBroadcast();
    }
 
   /**
@@ -210,14 +213,14 @@ export class NumberPanelService
     
     return new Observable((observer) => {
       this.loadData(gameName, (jsonData) => {
-        //console.log(">>>>got the data...:", jsonData);
+        console.log(">>>>got the data...:", jsonData);
 
         this.currentDrawnNumber = null;
         this.setUpdata(jsonData);
         this.setupTheMega(jsonData);
         this.currentDrawnNumber = jsonData.lastDrawnNumberList;
         this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
-        this.currentDrawnNumberObservable.complete();
+        //this.currentDrawnNumberObservable.complete(); //Call complete right after will sabotage the delivery of the data
         //console.log(">>>current drawn number:", this.currentDrawnNumber);
         this.setupClickUpdate();
         this.setupMessageObservable();
@@ -322,8 +325,32 @@ export class NumberPanelService
      callback(jsonData);
    }
 
+/**
+ * 
+ * @param gameName 
+ * @param callback 
+ */
+   loadData(gameName, callback)
+   {
+     this.reset();
+     this.dataService.getLastResults_usingRxjs(
+        gameName)
+        .subscribe(
+           (data) => callback(data),
+           (error) => {},
+           () => {}
+        );
+       
+   }
+ 
 
-  loadData(gameName, callback)
+
+   /**
+    * 
+    * @param gameName 
+    * @param callback 
+    */
+  loadData_old(gameName, callback)
   {
     this.dataService.getLastResults_asynch(
        gameName,
@@ -339,7 +366,7 @@ export class NumberPanelService
 
    private setUpdata(jsonData) {
     this.drawnNumbers = []; ///Clear the arrayy
-     for (let i = 0; i < 29; i++)
+     for (let i = 0; i < 31; i++)
      {
        
        const data = jsonData['numLine' + i];

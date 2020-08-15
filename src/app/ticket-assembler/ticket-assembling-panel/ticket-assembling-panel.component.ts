@@ -2,9 +2,9 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import *  as fromSelectedTicket from '../../store/actions/selected-numbers.action';
 import { Store, select } from '@ngrx/store';
 import { selectedTicketSelector } from 'src/app/store/selectors/LotteryNumberSelectors';
-import { delay, map, tap } from 'rxjs/operators';
+import { delay, map, tap, mapTo, multicast, refCount, filter } from 'rxjs/operators';
 import * as fromActions from '../../store/actions/selected-numbers.action'
-import { from, timer, interval, of, Observable, Subject } from 'rxjs';
+import { from, timer, interval, of, Observable, Subject, empty } from 'rxjs';
 import { ObserversModule } from '@angular/cdk/observers';
 
 @Component({
@@ -14,11 +14,18 @@ import { ObserversModule } from '@angular/cdk/observers';
 })
 export class TicketAssemblingPanelComponent implements OnInit, AfterViewInit {
 
-  numberInTicket = ["03", "11", "45","27","13"];
-  ticketAnalysis = "Q0-1[16:1] Q1-4[30:3;39:1] Q2-1[39:1] Q3-4[43:1;30:1;37:1;39:1] Q4-5[39:1 37:2;43:1;30:1] Q5-1[37:1]";
+  numberInTicket = [];
+  ticketAnalysis = "";
 
   private highlightTicket = false;
   highlightTicketSubject = new Subject<string[]>();
+
+  $showTemplate = this.getTicketMultiCastObs("$showTemplate").pipe(
+     tap(ticket => console.log(">>>[TicketAssemblingPanelComponent] $showTemplate ", ticket)),
+      map(ticket => ticket?.length > 0),
+      
+
+  );
 
   constructor(private selectedTicketStore: Store<fromSelectedTicket.AppState>,
               private highlightTicketStore: Store<fromActions.AppState>) { }
@@ -46,11 +53,29 @@ export class TicketAssemblingPanelComponent implements OnInit, AfterViewInit {
         })
      )
      .subscribe(ticket => {
-        //console.log(">>>>[TicketAssemblingPanelComponent] ngAfterViewInit, state: ", ticket);
+        console.log(">>>>[TicketAssemblingPanelComponent] ngAfterViewInit, state: ", ticket);
         
         this.highlightTicketSubject.next(this.numberInTicket);
         })
+
+    //  this.$showTemplate.subscribe((ticket) => 
+    //       console.log(">>>>[TicketAssemblingPanelComponent] ngAfterViewInit test $showTemplate, state: ", ticket))   
+
   }
+
+  /**
+   * 
+   */
+  getTicketMultiCastObs(name?: string) : Observable<string[]> {
+    console.log(">>>[TicketAssemblingPanelComponent] getTicketMultiCastObs() invoked by ", name);
+     return from(this.highlightTicketSubject).pipe(
+         multicast(new Subject()),
+         refCount(),
+
+     )
+
+  }
+
 
   getTicketObs() : Observable<string[]> {
     return new Observable<string[]> (observer => {

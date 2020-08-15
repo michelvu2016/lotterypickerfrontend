@@ -1,8 +1,8 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 
 import {Injectable} from '@angular/core';
-import {catchError, map} from 'rxjs/operators';
-import {Observable, of} from 'rxjs';
+import {catchError, map, tap, retryWhen, delayWhen, filter, take, startWith, switchMap, mapTo} from 'rxjs/operators';
+import {Observable, of, timer, interval} from 'rxjs';
 import {stringify} from 'querystring';
 import {LastDrawnNumber} from '../models/LastDrawnNumber';
 import * as _ from 'lodash';
@@ -30,6 +30,11 @@ const TEST_POST = '{\n' +
 export class DataService {
 
    constructor(private http: HttpClient, private asynchExecutor: AsynchProcessExecutorService) {}
+
+  private log(cat, msg) {
+     console.log(`>>>[DataService] ${cat} - ${msg}`);
+  }
+
 
 
    getLastResults_xx(resultCallback, errorCallback) {
@@ -72,6 +77,85 @@ export class DataService {
 
 
   }
+
+  //----- new function using rxjs ----------------
+  /**
+   * 
+   * @param gameName 
+   */
+  getLastResults_usingRxjs(gameName) : Observable<LastDrawnNumber[]> {
+
+    var baton = null;
+    var count = 0;
+    const numTry = 5;
+    const waitTime = 3000; //3 seconds
+
+    const params = new HttpParams({
+      fromString: `baton=${baton}`
+    });
+
+    
+    const url = `${analyzedPastDrawnNumberBaseUrl}/${gameName}`;
+
+    return interval(100)
+    .pipe(
+       take(1),
+       map(val => {
+          this.log(">>>Return baton:", baton);
+          return baton;
+       }),
+       map(baton => {
+         this.log("httpParams baton:", baton);
+         const useBaton = baton ? baton : ""
+         return new HttpParams({ //Compute the parameter
+          fromString: `baton=${useBaton}`
+          })
+        }),
+          
+       switchMap(params => { //Invoke the http call
+          this.log("calling http with params:", params);
+          return this.http.get<{baton: string, status: string, data: string}>(url, {params, headers: this.createBasicAuthHeader(username, password)}   )
+       
+      }),
+      tap(resp => {
+         if(resp.status == 'pending') {
+            this.log("resp.baton", resp.baton);
+            if(++count < numTry) {
+              this.log("Throw error to retry. count:", count );
+              throw resp;
+            }
+         } else if (resp.status == "failure") {
+            throw resp;
+         }
+      }),
+      filter(resp => resp.status == "success"),
+      map(resp => {
+        return JSON.parse(resp.data) 
+      }),
+      retryWhen(exc => {
+        
+         return  exc.pipe(
+           map(resp => <{status: string, baton: string, result: string}> resp),
+           tap(resp => {if (resp.status == "failure") throw resp.result}),
+           
+           tap(resp => {
+            this.log("Current baton:", resp.baton);
+            baton = resp.baton;
+            this.log("Next baton:", baton);
+           }),
+           delayWhen(_ => timer(waitTime))
+         )
+        
+      }),
+      catchError(err => {
+        this.log("catchError", "Exception encountered "+err);
+        return of([]);
+      }
+      )
+    )
+    }
+
+  //-----------------------------------------------
 
   /**
    *
@@ -121,7 +205,7 @@ export class DataService {
       * @param numberOfNumbers
         * @param lotteryTypeId
         */
-        getDrawnNumberWithAsync(numberOfNumbers: number, lotteryTypeId: string) {
+  getDrawnNumberWithAsync(numberOfNumbers: number, lotteryTypeId: string) {
 
           return new Promise((resolve, reject) => {
             let baton = null;
