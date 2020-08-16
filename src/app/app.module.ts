@@ -42,6 +42,7 @@ import { StoreDevtoolsModule}  from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
 import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.module';
 import { NumberInputFormComponent } from './selected-number-manager/number-input-form/number-input-form.component';
+import { AppLastDrawnNumbersEffect } from './store/effects/app-last-drawn-numbers.effects';
 
 
 
@@ -96,7 +97,12 @@ import { NumberInputFormComponent } from './selected-number-manager/number-input
     TicketAssemblerModule,
     MatButtonModule,
   ],
-  providers: [NumberPanelService, DataService, CommonServices, AsynchProcessExecutorService],
+  providers: [NumberPanelService, 
+    DataService, 
+    CommonServices, 
+    AsynchProcessExecutorService,
+    AppLastDrawnNumbersEffect,
+  ],
   exports: [
     NumberControlComponent
   ],

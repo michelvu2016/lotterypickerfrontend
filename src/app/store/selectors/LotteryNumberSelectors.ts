@@ -30,3 +30,5 @@ export const selectTicketToHighLight = createSelector (
     (state: fromActions.TicketToHighLightState ) => state.ticketNumbers
 
 )
+
+export const selectLastDrawnNumber = createSelector

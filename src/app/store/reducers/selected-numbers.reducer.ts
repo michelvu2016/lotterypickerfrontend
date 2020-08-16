@@ -46,6 +46,10 @@ const initialTicketToBeHighLightState : fromActions.TicketToHighLightState = {
 }
 
 
+const lastDrawnNumberStoreInitialState: fromActions.LastDrawnNumberState = {
+  lastDrawnNumbers : []
+}
+
   //Return the reducer
 export function ticketSelectingReducer(state, action) {
    return _ticketSelectingReducer(state, action);
@@ -58,3 +62,11 @@ export const ticketHighLightReducer = createReducer(
   on(fromActions.clearHightlightTicketAction, (state, action) => ({...state, ticketNumbers: null}))
 
 )
+
+export const lastDrawnNumberReducer = createReducer(
+  lastDrawnNumberStoreInitialState,
+  on(fromActions.saveLastDrawnNumberAction, (state, action) => ({...state, lastDrawnNumbers: action.lastDrawnNumbers})),
+  on(fromActions.resetLastDrawnNumberAction, (state, action) => ({...state, lastDrawnNumbers: []}))
+  )
+
+

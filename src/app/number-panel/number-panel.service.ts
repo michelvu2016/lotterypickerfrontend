@@ -201,6 +201,7 @@ export class NumberPanelService
   reset() {
     this.drawnNumbers = [];
     this.currentDrawnNumber = [];
+    //this.messageQueue.push("");
     this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
     this.dataReadyBroadcast();
    }
@@ -218,7 +219,7 @@ export class NumberPanelService
         this.currentDrawnNumber = null;
         this.setUpdata(jsonData);
         this.setupTheMega(jsonData);
-        this.currentDrawnNumber = jsonData.lastDrawnNumberList;
+        this.currentDrawnNumber = jsonData.lastDrawnNumberList ? jsonData.lastDrawnNumberList : [];
         this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
         //this.currentDrawnNumberObservable.complete(); //Call complete right after will sabotage the delivery of the data
         //console.log(">>>current drawn number:", this.currentDrawnNumber);
@@ -333,11 +334,15 @@ export class NumberPanelService
    loadData(gameName, callback)
    {
      this.reset();
+     this.messageQueue.push("Loading the data from the backend");
      this.dataService.getLastResults_usingRxjs(
         gameName)
         .subscribe(
-           (data) => callback(data),
-           (error) => {},
+           (data) => {
+              this.messageQueue.push("Receive data from the backend service");
+              callback(data);
+           },
+           (error) => {this.messageQueue.push(error)},
            () => {}
         );
        
@@ -364,16 +369,21 @@ export class NumberPanelService
     );
   }
 
-   private setUpdata(jsonData) {
+  /**
+   * 
+   * @param jsonData 
+   */
+  private setUpdata(jsonData) {
     this.drawnNumbers = []; ///Clear the arrayy
-     for (let i = 0; i < 31; i++)
-     {
-       
-       const data = jsonData['numLine' + i];
-       this.drawnNumbers.push(data);
-     }
+    if(jsonData?.numLine0) {
+        for (let i = 0; i < 31; i++)
+          {
+              const data = jsonData['numLine' + i];
+              this.drawnNumbers.push(data);
+          }
+        this.currentDrawnNumber = jsonData.lastDrawnNumberList;
+    }
 
-     this.currentDrawnNumber = jsonData.lastDrawnNumberList;
    }
 
 

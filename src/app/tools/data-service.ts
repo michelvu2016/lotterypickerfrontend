@@ -17,7 +17,7 @@ const analyzedPastDrawnNumberBaseUrl = environment.baseUrl +'/api/getAnalyzedDra
 const username = 'mvu';
 const password = "cel123";
 
-const numberOfAttempts = 3;
+const numberOfAttempts = 5;
 
 const TEST_POST = '{\n' +
   '\t"date":"May 18, 2019",\n' +
@@ -83,7 +83,7 @@ export class DataService {
    * 
    * @param gameName 
    */
-  getLastResults_usingRxjs(gameName) : Observable<LastDrawnNumber[]> {
+  getLastResults_usingRxjs(gameName) : Observable<any> {
 
     var baton = null;
     var count = 0;
@@ -113,10 +113,16 @@ export class DataService {
         }),
           
        switchMap(params => { //Invoke the http call
-          this.log("calling http with params:", params);
-          return this.http.get<{baton: string, status: string, data: string}>(url, {params, headers: this.createBasicAuthHeader(username, password)}   )
-       
-      }),
+           this.log("calling http with params:", params);
+           return this.http.get<{baton: string, status: string, data: string}>(url, {params, headers: this.createBasicAuthHeader(username, password)}   )
+              .pipe(
+                  catchError((err, caught) => {
+                    this.log(">>>>catchError on triggering http", err);
+                    return of({status: 'failure', baton: null, data: null, result: "Exception encountered calling the backend service"})
+                  })        
+              )
+          }
+       ),
       tap(resp => {
          if(resp.status == 'pending') {
             this.log("resp.baton", resp.baton);
@@ -125,6 +131,7 @@ export class DataService {
               throw resp;
             }
          } else if (resp.status == "failure") {
+           this.log(">>>Failure encounterd","");
             throw resp;
          }
       }),
@@ -149,7 +156,8 @@ export class DataService {
       }),
       catchError(err => {
         this.log("catchError", "Exception encountered "+err);
-        return of([]);
+        throw err;
+        //return of([]);
       }
       )
     )

@@ -2,6 +2,7 @@ import { Action, createAction, props } from '@ngrx/store';
 import { SelectedNumbers } from '../../models/SelectedNumbers';
 import * as constants from '../../constants/constants';
 import { NumberSelectionPanelComponent } from 'src/app/number-selection-panel/number-selection-panel.component';
+import { LastDrawnNumber } from 'src/app/models/LastDrawnNumber';
 
 export class SelectedNumbersAction implements Action {
   type: string;
@@ -18,6 +19,17 @@ export class SelectedNumbersAction implements Action {
   }
 }
 
+export const actionNames = {
+  selectedComponent_save: "[selected-number component] save",
+  application_flow_logic_set: "[application-flow logic] set",
+  numberSelectionPanelComponent_clear: "[NumberSelectionPanelComponent] component clear",
+  numberPanelService_load: "[NumberPanelService] service] load",
+  numberPanelService_save: "[NumberPanelService] service] save",
+  numberPanelService_reset: "[NumberPanelService] service] reset",
+  numberPanelService_error: "[NumberPanelService] service] error",
+}
+
+
 export interface TicketState {
   selectedNumber: string[]
 
@@ -31,29 +43,59 @@ export interface SelectedHighLightNumberState {
   
 }
 
+export interface ErrorState {
+   msg: string
+}
+
 export interface AppState {
     analyzedNumber: any,
     highlightCurDrawnNumber: any,
     selectedNumbers: any,
     selectedTicket: TicketState,
     ticketToHighLight: TicketToHighLightState,
+    lastDrawnNumbers: LastDrawnNumberState,
+    errors: ErrorState,
+}
+
+export interface LastDrawnNumberState {
+    lastDrawnNumbers: LastDrawnNumber[];
 }
 
 
-
-
 export const ticketSelectingAction = createAction(
-  "[selected-number component] save",
+   actionNames.selectedComponent_save,
   props<TicketState>()
 
 );
 
 export const setHighlightTicketAction = createAction(
-  "[application-flow logic] set",
+  actionNames.application_flow_logic_set,
+  
   props<TicketToHighLightState>()
 )
 
 export const clearHightlightTicketAction = createAction(
-  "[NumberSelectionPanelComponent] component clear"
+  actionNames.numberSelectionPanelComponent_clear,
+  
 );
 
+export const loadLastDrawnNumberAction = createAction(
+  actionNames.numberPanelService_load, 
+   props<{gameName: string}>() 
+);
+
+export const saveLastDrawnNumberAction = createAction (
+   actionNames.numberPanelService_save,
+   props<LastDrawnNumberState>()
+)
+
+export const resetLastDrawnNumberAction = createAction (
+
+  actionNames.numberPanelService_reset
+)
+
+export const errorLastDrawnNumberAction = createAction (
+
+  actionNames.numberPanelService_error,
+  props<ErrorState>()
+)
