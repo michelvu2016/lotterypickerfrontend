@@ -2,7 +2,7 @@ import {
   ErrorObserver, Subject, of, Observable, ConnectableObservable,
   interval, Observer
 } from 'rxjs';
-import {take, mapTo, tap, multicast, map} from 'rxjs/operators';
+import {take, mapTo, tap, multicast, map, switchMap} from 'rxjs/operators';
 import set = Reflect.set;
 import {typeIsOrHasBaseType} from 'tslint/lib/language/typeUtils';
 import {Injectable} from '@angular/core';
@@ -10,6 +10,8 @@ import {DataService} from '../tools/data-service';
 import { publish } from 'rxjs/operators';
 import _ from 'lodash';
 import * as TicketInQuadrantAnalysisResult  from '../models/TicketInQuadrantAnalysisResult';
+import {fromActions, fromReducer, fromSelectors} from '../store';
+import { Store } from '@ngrx/store';
 
 type TicketQuadAnalysisResultReader =
   TicketInQuadrantAnalysisResult.TicketInQuadrantAnalysisResultReader;
@@ -32,6 +34,8 @@ export class NumberPanelService
     }[] = [];
 
     appInitObserverQ = [];
+
+    initialized = false;
 
     megaNumberInfoChange = new Subject<void>();
 
@@ -74,7 +78,7 @@ export class NumberPanelService
      proposedTicket: string[]
   }> [] = [];
 
-   constructor (private dataService: DataService)
+   constructor (private dataService: DataService, private store: Store<fromActions.AppState>)
    {
       //console.log('>>>Number-panel service:', new Date().getMilliseconds());
    }
@@ -206,10 +210,123 @@ export class NumberPanelService
     this.dataReadyBroadcast();
    }
 
+
+   /**
+    * Perform all data init after the data is received from the external source
+    * called when the data is fetched successfully from the backend
+    * @param jsonData 
+    */
+  private dataProcessingSetup(jsonData) {
+    this.currentDrawnNumber = null;
+    this.setUpdata(jsonData);
+    this.setupTheMega(jsonData);
+    this.currentDrawnNumber = jsonData?.lastDrawnNumberList ? jsonData.lastDrawnNumberList : [];
+    this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
+    //this.currentDrawnNumberObservable.complete(); //Call complete right after will sabotage the delivery of the data
+    //console.log(">>>current drawn number:", this.currentDrawnNumber);
+    this.setupClickUpdate();
+    this.setupMessageObservable();
+    this.dataReadyBroadcast();
+  }
+
+   
+
+  /**
+   * Process init
+   * Observe the store changes for the last drawn numbers
+   */
+  private initProcess() {
+    if(!this.initialized) {
+         console.log(">>>>[NumberPanelService] register selector");
+          this.store.select(fromSelectors.lastDrawnNumberSelector)
+          .subscribe((data) => {
+            console.log(">>>>[NumberPanelService] refresh panel data:", data);
+            this.store.dispatch(fromActions.messageAction({msg: "Processing data..."}));
+            this.dataProcessingSetup(data);
+            this.store.dispatch(fromActions.messageAction({msg: ""}));
+          });
+
+          console.log(">>>>Setup the error selector subscriber")
+          this.store.select(fromSelectors.errorSelector)
+          .subscribe(error => {
+              console.log(">>>>[NumberPanelService] error from store:", error);
+              this.messageQueue.push(error)
+              });
+          this.initialized = true;
+    }
+
+  }
+
+  /**
+   * Initiate the data load for the game
+   * @param gameName 
+   */
+  private initThePanelData_usingStore(gameName) {
+      
+      this.store.dispatch(
+          fromActions.loadLastDrawnNumberAction({gameName})
+      );
+  }
+
+  /**
+   * 
+   * @param data 
+   */
+  private shiftKey(data, startFrom=1) {
+    let data1 = {...data};
+
+    let count = 0;
+    data1['lastDrawnNumberList'] = data1['numLine'+startFrom]
+    for (let i = 0; ; i++) {
+        if(data1['numLine'+(i+startFrom+1)] == undefined) {
+           delete data1['numLine'+i];   
+           break;
+        }
+        data1['numLine'+i] = data1['numLine'+(i+startFrom+1)];
+    }
+    return data1;
+  }
+   
+
+  /**
+   * 
+   * @param ticketNumber 
+   */
+  public focusOnPastTicket(ticketNumber: number) {
+     this.store.dispatch(fromActions.clearHightlightTicketAction());
+     const sub = this.store.select(fromSelectors.lastDrawnNumberSelector)
+        .pipe(
+            map(data => this.shiftKey(data, ticketNumber)),
+            tap(data => {
+                this.dataProcessingSetup(data);
+                sub.unsubscribe();
+            })
+
+        ).subscribe(
+          (data) => this.store.dispatch(fromActions.setHighlightTicketAction({ticketNumbers: data['lastDrawnNumberList']}))
+        ); 
+  }
+
+  /**
+   * 
+   * @param gameName 
+   */
+   initThePanelData(gameName) {
+     this.initProcess();
+     this.store.dispatch(
+       fromActions.messageAction({msg: "Fetching the data from backend service via store"})
+     )
+    return new Observable((observer) => {
+       this.initThePanelData_usingStore(gameName);
+       observer.next();
+     });
+   }
+
+
   /**
    *
    */
-  initThePanelData(gameName) {
+  private initThePanelData_usingConventional(gameName) {
     //console.log(">>Retrieving the data for ", gameName);
     
     return new Observable((observer) => {
@@ -258,7 +375,7 @@ export class NumberPanelService
    */
   setupTheMega(jsonData) {
 
-      if (jsonData.megaResult) {
+      if (jsonData?.megaResult) {
         this._last25Mega = jsonData.megaResult.last25mega;
         this._last40Mega = jsonData.megaResult.last40mega;
         this._repeatedMega = jsonData.megaResult.repeatedMega;
@@ -326,12 +443,39 @@ export class NumberPanelService
      callback(jsonData);
    }
 
+ 
+   /**
+ * 
+ * @param gameName 
+ * @param callback 
+ */
+loadData(gameName, callback)
+{
+  this.reset();
+
+
+
+  this.messageQueue.push("Loading the data from the backend");
+  this.dataService.getLastResults_usingRxjs(
+     gameName)
+     .subscribe(
+        (data) => {
+           this.messageQueue.push("Receive data from the backend service");
+           callback(data);
+        },
+        (error) => {this.messageQueue.push(error)},
+        () => {}
+     );
+    
+}
+
+
 /**
  * 
  * @param gameName 
  * @param callback 
  */
-   loadData(gameName, callback)
+   loadData_v1_3_3(gameName, callback)
    {
      this.reset();
      this.messageQueue.push("Loading the data from the backend");

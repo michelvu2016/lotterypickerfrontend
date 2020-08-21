@@ -124,6 +124,7 @@ export class DataService {
           }
        ),
       tap(resp => {
+        this.log(">>>Response received:", resp.status);
          if(resp.status == 'pending') {
             this.log("resp.baton", resp.baton);
             if(++count < numTry) {

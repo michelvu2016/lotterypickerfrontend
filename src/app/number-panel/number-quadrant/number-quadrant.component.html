@@ -2,7 +2,7 @@
 <table class="table table-bordered text-center pastDrawnNumber panel-border">
         <tr *ngFor="let numberSet of numberList; let i = index">
           <td *ngFor="let num of numberSet; let j = index">
-
+            
             <app-number-control [number]="num"
 
             (numberSelectedEvent)="onOverNumber($event)"

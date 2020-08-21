@@ -47,7 +47,15 @@ const initialTicketToBeHighLightState : fromActions.TicketToHighLightState = {
 
 
 const lastDrawnNumberStoreInitialState: fromActions.LastDrawnNumberState = {
-  lastDrawnNumbers : []
+  lastDrawnNumbers : null
+}
+
+const errorInitialState: fromActions.ErrorState = {
+   msg: null
+}
+
+const messageInitialState: fromActions.MessageState = {
+  msg: null
 }
 
   //Return the reducer
@@ -69,4 +77,12 @@ export const lastDrawnNumberReducer = createReducer(
   on(fromActions.resetLastDrawnNumberAction, (state, action) => ({...state, lastDrawnNumbers: []}))
   )
 
+  export const errorReducer = createReducer(
+    errorInitialState,
+    on(fromActions.errorLastDrawnNumberAction, (state, action) => ({...state, msg: action.msg}))
+  )
 
+export const messageReducer = createReducer(
+    messageInitialState,
+    on(fromActions.messageAction, (state, action) => ({...state, msg: action.msg}))
+)

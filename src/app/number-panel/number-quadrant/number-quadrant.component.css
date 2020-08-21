@@ -11,3 +11,8 @@
     box-shadow: inset 2px 2px 4px black;
     border-radius: 12px/25px;
 }
+
+table tr {
+    background-image: linear-gradient(to bottom, rgb(228, 238, 238), white, rgb(167, 158, 158));
+    background-color: blue;
+}

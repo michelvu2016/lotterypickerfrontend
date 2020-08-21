@@ -2,6 +2,8 @@ import {AfterViewChecked, Component, OnInit, Output, EventEmitter, Input, AfterV
 import {NumberPanelService} from '../number-panel.service';
 import * as fromActions from '../../store/actions/selected-numbers.action';
 import { Store } from '@ngrx/store';
+import { of } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 
 
 @Component({
@@ -34,7 +36,14 @@ export class CurrentDrawnNumberComponent implements OnInit, AfterViewInit, OnCha
          next(value) {
           console.log(">>>[CurrentDrawnNumberComponent] update currentDrawnNumbers:", value); 
           thisObj.currentDrawnNumbers = value;
-          thisObj.sendNumberToHighLightInPanel();
+          of()
+          .pipe(
+              delay(100),
+              tap(() => this.clearNumberHighLight()),
+              delay(500),
+              tap(() => thisObj.sendNumberToHighLightInPanel())
+          ).subscribe()
+          
           },
          error() {},
          complete() {
@@ -43,6 +52,18 @@ export class CurrentDrawnNumberComponent implements OnInit, AfterViewInit, OnCha
 
   }
 
+  /**
+   * 
+   */
+  clearNumberHighLight() {
+    this.numberToBeHighLightStore.dispatch(
+        fromActions.clearHightlightTicketAction()
+    );
+  }
+
+  /**
+   * 
+   */
   sendNumberToHighLightInPanel() {
     const thisObj = this;
     

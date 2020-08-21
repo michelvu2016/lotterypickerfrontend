@@ -18,8 +18,10 @@ export class NumberPanelComponent implements OnInit, AfterViewInit {
   ngOnInit() {
 
       this.drawnNumbers = this.numberPanelService.getDrawnNumbers();
+  }
 
-
+  rowClick() {
+     console.log(">>>>Row clicked");
   }
 
   ngAfterViewInit(): void {

@@ -27,6 +27,7 @@ export const actionNames = {
   numberPanelService_save: "[NumberPanelService] service] save",
   numberPanelService_reset: "[NumberPanelService] service] reset",
   numberPanelService_error: "[NumberPanelService] service] error",
+  message: "[MessageBoardComponent] component] message",
 }
 
 
@@ -43,9 +44,7 @@ export interface SelectedHighLightNumberState {
   
 }
 
-export interface ErrorState {
-   msg: string
-}
+
 
 export interface AppState {
     analyzedNumber: any,
@@ -55,10 +54,18 @@ export interface AppState {
     ticketToHighLight: TicketToHighLightState,
     lastDrawnNumbers: LastDrawnNumberState,
     errors: ErrorState,
+    message: MessageState,
 }
 
+export interface MessageState {
+  msg: string
+}
+
+export interface ErrorState extends MessageState {
+   
+}
 export interface LastDrawnNumberState {
-    lastDrawnNumbers: LastDrawnNumber[];
+    lastDrawnNumbers: any;
 }
 
 
@@ -98,4 +105,10 @@ export const errorLastDrawnNumberAction = createAction (
 
   actionNames.numberPanelService_error,
   props<ErrorState>()
+)
+
+export const messageAction = createAction (
+
+  actionNames.message,
+  props<MessageState>()
 )

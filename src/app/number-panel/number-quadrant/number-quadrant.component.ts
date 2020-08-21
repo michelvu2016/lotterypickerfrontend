@@ -60,7 +60,13 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
     this.observeSelectedNumbers();
   }
 
-  
+  /**
+   * 
+   * @param rowIndex 
+   */
+  rowClick(rowIndex:number) {
+     this.numberPanelService.focusOnPastTicket(rowIndex);
+  }
 
   /**
    *

@@ -20,13 +20,6 @@ export class TicketAssemblingPanelComponent implements OnInit, AfterViewInit {
   private highlightTicket = false;
   highlightTicketSubject = new Subject<string[]>();
 
-  $showTemplate = this.getTicketMultiCastObs("$showTemplate").pipe(
-     tap(ticket => console.log(">>>[TicketAssemblingPanelComponent] $showTemplate ", ticket)),
-      map(ticket => ticket?.length > 0),
-      
-
-  );
-
   constructor(private selectedTicketStore: Store<fromSelectedTicket.AppState>,
               private highlightTicketStore: Store<fromActions.AppState>) { }
 

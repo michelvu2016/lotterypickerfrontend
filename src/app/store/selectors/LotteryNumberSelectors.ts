@@ -2,6 +2,7 @@ import * as  fromHighlightCurrDrawnNumbersAction from '../actions/HighlightCurrD
 import { createSelector } from '@ngrx/store';
 import { AppState, TicketState } from '../actions/selected-numbers.action';
 import * as fromActions from '../actions/selected-numbers.action';
+import { state } from '@angular/animations';
 
 
 export const highlightCurrDrawnNumbers = (state) => {
@@ -32,3 +33,19 @@ export const selectTicketToHighLight = createSelector (
 )
 
 export const selectLastDrawnNumber = createSelector
+
+export const lastDrawnNumberSelector = createSelector (
+    (state: AppState) => state.lastDrawnNumbers,
+    (state: fromActions.LastDrawnNumberState) => state.lastDrawnNumbers
+
+)
+
+export const errorSelector = createSelector (
+    (state: AppState) => state.errors,
+    (state: fromActions.ErrorState) => state.msg
+)
+
+export const messageSelector = createSelector (
+    (state: AppState) => state.message,
+    (state: fromActions.MessageState) => state.msg
+)

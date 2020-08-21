@@ -34,6 +34,7 @@ import { highlightCurDrawnNumbersReducer } from './store/reducers/highlightCurDr
 // import { selectedNumbersReducer, ticketSelectingReducer } from './store/reducers/selected-numbers.reducer';
 
 import * as fromReducers from './store/reducers/selected-numbers.reducer';
+import { selectedTicketReducer } from './store/selected-tickets/reducers/SelectedTickets.reducers';
 
 import { NumberQuadrantAnalysisCompoennt } from './number-panel/number-quadrant-analysis/number-quadrant-analysis.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -43,6 +44,8 @@ import { environment } from 'src/environments/environment';
 import { TicketAssemblerModule } from './ticket-assembler/ticket-assembler.module';
 import { NumberInputFormComponent } from './selected-number-manager/number-input-form/number-input-form.component';
 import { AppLastDrawnNumbersEffect } from './store/effects/app-last-drawn-numbers.effects';
+import { fromActions } from './store';
+import { from } from 'rxjs';
 
 
 
@@ -85,10 +88,14 @@ import { AppLastDrawnNumbersEffect } from './store/effects/app-last-drawn-number
       selectedNumbers: fromReducers.selectedNumbersReducer,
       selectedTicket: fromReducers.ticketSelectingReducer,
       ticketToHighLight: fromReducers.ticketHighLightReducer,
+      lastDrawnNumbers: fromReducers.lastDrawnNumberReducer,
+      errors: fromReducers.errorReducer,
+      message: fromReducers.messageReducer,
+      selectedTickets: selectedTicketReducer,
     }),
     MeganumberModule,
     BrowserAnimationsModule,
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([AppLastDrawnNumbersEffect]),
     StoreDevtoolsModule.instrument({
        maxAge: 25,
        logOnly: environment.production,
@@ -101,7 +108,7 @@ import { AppLastDrawnNumbersEffect } from './store/effects/app-last-drawn-number
     DataService, 
     CommonServices, 
     AsynchProcessExecutorService,
-    AppLastDrawnNumbersEffect,
+  
   ],
   exports: [
     NumberControlComponent
