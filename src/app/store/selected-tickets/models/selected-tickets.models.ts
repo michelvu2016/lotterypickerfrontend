@@ -1,12 +1,8 @@
 
-export type ticket = {
+export type Ticket = {
+    ticketId: number,
+    forDrawnDate: string,
     numbers: string[],
     mega: string
-}
-
-export type SelectedTickets = {
-    gameType: string,
-    date: string,
-    ticket: ticket[]
 }
 

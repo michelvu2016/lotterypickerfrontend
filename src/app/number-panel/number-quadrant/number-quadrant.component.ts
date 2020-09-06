@@ -31,6 +31,8 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
 
   highlightCurrentDrawnNumber: boolean = true;
 
+  currentOffset: number = 0;
+
   constructor(private numberPanelService: NumberPanelService, private commonService: CommonServices,
     private highlightCurDrawnNumberStore: Store<highlightCurDrawnNumbers.HighlightState>,
     private commonServices: CommonServices,
@@ -65,7 +67,9 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
    * @param rowIndex 
    */
   rowClick(rowIndex:number) {
-     this.numberPanelService.focusOnPastTicket(rowIndex);
+     const panelNumber = this.index; //new local variable to help clarify the meaning of index
+     const absoluteIndex = this.currentOffset+ (panelNumber * 5)+rowIndex;
+     this.numberPanelService.focusOnPastTicket(absoluteIndex);
   }
 
   /**

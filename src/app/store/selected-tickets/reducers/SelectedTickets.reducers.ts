@@ -1,11 +1,12 @@
 import { createReducer, on } from "@ngrx/store";
 import { EntityState, createEntityAdapter, EntityAdapter } from '@ngrx/entity';
-import { SelectedTickets } from '../models/selected-tickets.models';
-import { addTicketAction, updateTicketAction, deleteTicketsAction } from '../actions/app-selected-tickets.actions';
+
+import { addTicketAction, updateTicketAction, deleteTicketsAction} from '../actions/app-selected-tickets.actions';
 import { AppState } from '../../actions/selected-numbers.action';
+import { Ticket } from '../models/selected-tickets.models';
 
 
-export interface SelectedTicketState extends EntityState<SelectedTickets> {
+export interface SelectedTicketState extends EntityState<Ticket> {
     selectedPickedDate: string 
 }
 
@@ -14,12 +15,12 @@ export interface SelectedTicketsState extends AppState {
 }
 
 
-function selectPickDate(tickets: SelectedTickets) {
-    return tickets.date;
+function selectPickDate(ticket: Ticket) {
+    return ticket.forDrawnDate;
 }
 
 
-const ticketEntityAdapter: EntityAdapter<SelectedTickets> = createEntityAdapter<SelectedTickets>({
+const ticketEntityAdapter: EntityAdapter<Ticket> = createEntityAdapter<Ticket>({
     selectId: selectPickDate
 });
 
@@ -36,9 +37,13 @@ const reducerHub = createReducer(
     on(updateTicketAction, (state, {updateSelectedTicket}) => {
         return ticketEntityAdapter.updateOne(updateSelectedTicket, state);
     }),
-    on(deleteTicketsAction, (state, {datePicked}) => {
-        return ticketEntityAdapter.removeOne(datePicked, state);
+    on(deleteTicketsAction, (state, {ticketId}) => {
+        return ticketEntityAdapter.removeOne(ticketId, state);
+    }),
+    on(addTicketAction, (state, {selectedTicket}) => {
+        return ticketEntityAdapter.addOne(selectedTicket, state);
     })
+
 
 )
 

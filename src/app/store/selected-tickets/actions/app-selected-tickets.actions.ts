@@ -1,29 +1,28 @@
 import { createAction, props } from '@ngrx/store'
 import { Update, EntityState } from '@ngrx/entity';
-import { SelectedTickets } from '../models/selected-tickets.models';
+import { Ticket } from '../models/selected-tickets.models';
+
 
 
 
 export const actionNames = {
-    addTickets: "[app-selected-tickets] addTickets action",
-    updateTickets: "[app-selected-tickets updateTickets action",
-    deleteTickets: "[app-selected-tickets] addTickets action",
-    
+    addTicket: "[app-selected-tickets] addTicket action",
+    updateTicket: "[app-selected-tickets updateTicket action",
+    deleteTicket: "[app-selected-tickets] addTicket action",
+
 }
 
+export const addTicketAction = createAction(actionNames.addTicket,
+    props<{selectedTicket: Ticket}>());
+    
 
 
-
-export const addTicketAction = createAction(actionNames.addTickets,
-    props<{selectedTicket: SelectedTickets}>());
-
-
-export const updateTicketAction = createAction(actionNames.updateTickets,
-    props<{updateSelectedTicket: Update<SelectedTickets>}>());
+export const updateTicketAction = createAction(actionNames.updateTicket,
+    props<{updateSelectedTicket: Update<Ticket>}>());
     
     
-export const deleteTicketsAction = createAction(actionNames.deleteTickets,
-     props<{datePicked: string}>()
+export const deleteTicketsAction = createAction(actionNames.deleteTicket,
+     props<{ticketId: number}>()
     );
 
 

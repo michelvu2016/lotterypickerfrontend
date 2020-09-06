@@ -28,6 +28,7 @@ export const actionNames = {
   numberPanelService_reset: "[NumberPanelService] service] reset",
   numberPanelService_error: "[NumberPanelService] service] error",
   message: "[MessageBoardComponent] component] message",
+  numberPanelOffset: "[NumberQuadrantComponent component] offset save",
 }
 
 
@@ -52,9 +53,14 @@ export interface AppState {
     selectedNumbers: any,
     selectedTicket: TicketState,
     ticketToHighLight: TicketToHighLightState,
-    lastDrawnNumbers: LastDrawnNumberState,
+    lastDrawnNumbers: LastDrawnNumberState & LastDrawnNumbersDisplayState,
     errors: ErrorState,
     message: MessageState,
+    numberPanelOffset: NumberPanelOffsetState,
+}
+
+export interface NumberPanelOffsetState {
+    offset: number
 }
 
 export interface MessageState {
@@ -68,6 +74,9 @@ export interface LastDrawnNumberState {
     lastDrawnNumbers: any;
 }
 
+export interface LastDrawnNumbersDisplayState {
+  ticketNumbersForDisplay: any;
+}
 
 export const ticketSelectingAction = createAction(
    actionNames.selectedComponent_save,
@@ -111,4 +120,10 @@ export const messageAction = createAction (
 
   actionNames.message,
   props<MessageState>()
+)
+
+
+export const saveNumberPanelOffsetAction = createAction (
+  actionNames.numberPanelOffset,
+  props<NumberPanelOffsetState>()
 )

@@ -58,6 +58,10 @@ const messageInitialState: fromActions.MessageState = {
   msg: null
 }
 
+const numberQuadrantOffsetInitialState: fromActions.NumberPanelOffsetState = {
+    offset: 0
+}
+
   //Return the reducer
 export function ticketSelectingReducer(state, action) {
    return _ticketSelectingReducer(state, action);
@@ -66,15 +70,31 @@ export function ticketSelectingReducer(state, action) {
 
 export const ticketHighLightReducer = createReducer(
   initialTicketToBeHighLightState,
-  on(fromActions.setHighlightTicketAction, (state, action) => ({...state, ticketNumbers: action.ticketNumbers})),
-  on(fromActions.clearHightlightTicketAction, (state, action) => ({...state, ticketNumbers: null}))
+  on(fromActions.setHighlightTicketAction, (state, action) => ({
+    ...state, 
+    ticketNumbers: action.ticketNumbers,
+    
+  })),
+  on(fromActions.clearHightlightTicketAction, (state, action) => ({
+                  ...state, 
+                  ticketNumbers: null,
+                  
+                }))
 
 )
 
 export const lastDrawnNumberReducer = createReducer(
   lastDrawnNumberStoreInitialState,
-  on(fromActions.saveLastDrawnNumberAction, (state, action) => ({...state, lastDrawnNumbers: action.lastDrawnNumbers})),
-  on(fromActions.resetLastDrawnNumberAction, (state, action) => ({...state, lastDrawnNumbers: []}))
+  on(fromActions.saveLastDrawnNumberAction, (state, action) => ({
+      ...state, 
+      lastDrawnNumbers: action.lastDrawnNumbers,
+      ticketNumbersForDisplay: action.lastDrawnNumbers,
+    })),
+  on(fromActions.resetLastDrawnNumberAction, (state, action) => ({
+          ...state,
+          lastDrawnNumbers: [],
+          ticketNumbersForDisplay: null,
+        }))
   )
 
   export const errorReducer = createReducer(
@@ -85,4 +105,11 @@ export const lastDrawnNumberReducer = createReducer(
 export const messageReducer = createReducer(
     messageInitialState,
     on(fromActions.messageAction, (state, action) => ({...state, msg: action.msg}))
+)
+
+export const numberPanelOffsetReducer = createReducer(
+  numberQuadrantOffsetInitialState,
+  on(fromActions.saveNumberPanelOffsetAction, (state, action) => {
+     return ({...state, offset: action.offset})
+  })
 )
