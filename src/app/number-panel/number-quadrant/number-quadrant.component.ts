@@ -68,8 +68,8 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
    */
   rowClick(rowIndex:number) {
      const panelNumber = this.index; //new local variable to help clarify the meaning of index
-     const absoluteIndex = this.currentOffset+ (panelNumber * 5)+rowIndex;
-     this.numberPanelService.focusOnPastTicket(absoluteIndex);
+     
+     this.numberPanelService.focusOnPastTicket(panelNumber, rowIndex);
   }
 
   /**

@@ -94,8 +94,60 @@ export const lastDrawnNumberReducer = createReducer(
           ...state,
           lastDrawnNumbers: [],
           ticketNumbersForDisplay: null,
-        }))
+        })),
+  on(fromActions.replayPastTicketAction, (state, action) => (
+     {
+        ...state,
+        ticketNumbersForDisplay: setCurrentDrawnToPastTicket(state.lastDrawnNumbers, action.ticketIndex)
+     }
+  ))
+
   )
+
+
+  /**
+   * Utility function to return the numeric result extract from the input string in the format numLinexx where x is numeric
+   * @param key 
+   */
+  const lineNumber = (key) : number => {
+    const regEx = /^numLine(\d{1,2})$/g;
+    const res = regEx.exec(key);
+    if (res != null && res.length >= 2)
+      {
+        return +res[1];
+      }
+      else {
+        return -1;
+      }
+
+    }
+         
+ /**
+  * 
+  * @param pastTickets 
+  * @param offset 
+  */
+  const setCurrentDrawnToPastTicket = (pastTickets, offset: number) => {
+
+      console.log("[selectedNumberReducer] setCurrentDrawnToPastTicket pastTickets:", pastTickets);
+
+      const newPastTickets = {}
+      newPastTickets['lastDrawnNumberList'] = pastTickets['numLine'+offset];
+      const keyNames = Object.keys(pastTickets).filter( key => 
+           (key.indexOf("numLine") != -1 && lineNumber(key) >= offset + 1 )              
+          )
+
+      let index = 0;
+      for (const key of keyNames) {
+        newPastTickets['numLine'+ (index++)] = pastTickets[key];
+      }
+
+      if (pastTickets['megaResult']) {
+        newPastTickets['megaResult'] = pastTickets['megaResult'];
+      }
+
+      return newPastTickets;
+  }
 
   export const errorReducer = createReducer(
     errorInitialState,

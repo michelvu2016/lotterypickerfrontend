@@ -292,19 +292,13 @@ export class NumberPanelService
    * 
    * @param ticketNumber 
    */
-  public focusOnPastTicket(ticketNumber: number) {
+  public focusOnPastTicket(panelNumber: number, rowIndex: number) {
      this.store.dispatch(fromActions.clearHightlightTicketAction());
-     const sub = this.store.select(fromSelectors.lastDrawnNumberSelector)
-        .pipe(
-            map(data => this.shiftKey(data, ticketNumber)),
-            tap(data => {
-                this.dataProcessingSetup(data);
-                sub.unsubscribe();
-            })
 
-        ).subscribe(
-          (data) => this.store.dispatch(fromActions.setHighlightTicketAction({ticketNumbers: data['lastDrawnNumberList']}))
-        ); 
+     const lineIndex = panelNumber * 5 + rowIndex;
+
+     this.store.dispatch(fromActions.replayPastTicketAction({ticketIndex: lineIndex}))
+
   }
 
   /**

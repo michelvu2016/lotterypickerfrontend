@@ -36,8 +36,12 @@ export const selectLastDrawnNumber = createSelector
 
 export const lastDrawnNumberSelector = createSelector (
     (state: AppState) => state.lastDrawnNumbers,
-    (state: fromActions.LastDrawnNumberState) => state.lastDrawnNumbers
-
+    (state: fromActions.LastDrawnNumberState & fromActions.LastDrawnNumbersDisplayState) => {
+        return state.ticketNumbersForDisplay;
+        
+        //state.lastDrawnNumbers
+        ;
+    }
 )
 
 export const errorSelector = createSelector (

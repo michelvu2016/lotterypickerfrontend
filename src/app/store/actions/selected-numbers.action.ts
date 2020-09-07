@@ -29,6 +29,8 @@ export const actionNames = {
   numberPanelService_error: "[NumberPanelService] service] error",
   message: "[MessageBoardComponent] component] message",
   numberPanelOffset: "[NumberQuadrantComponent component] offset save",
+  replayPastTicket: "[NumberPanelService] service replayPastTicket",
+  resetToCurrentDrawnTicket: "[NumberPanelService] service restToCurrentDrawnTicket", 
 }
 
 
@@ -115,6 +117,15 @@ export const errorLastDrawnNumberAction = createAction (
   actionNames.numberPanelService_error,
   props<ErrorState>()
 )
+
+export const replayPastTicketAction = createAction (
+   actionNames.replayPastTicket,
+   props<{ticketIndex: number}>()
+)
+
+export const resetToCurrentDrawnTicketAction = createAction (
+  actionNames.resetToCurrentDrawnTicket
+  )
 
 export const messageAction = createAction (
 
