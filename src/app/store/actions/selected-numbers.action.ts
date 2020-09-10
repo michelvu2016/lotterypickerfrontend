@@ -3,6 +3,7 @@ import { SelectedNumbers } from '../../models/SelectedNumbers';
 import * as constants from '../../constants/constants';
 import { NumberSelectionPanelComponent } from 'src/app/number-selection-panel/number-selection-panel.component';
 import { LastDrawnNumber } from 'src/app/models/LastDrawnNumber';
+import { SelectedTicketState } from '../selected-tickets/reducers/SelectedTickets.reducers';
 
 export class SelectedNumbersAction implements Action {
   type: string;
@@ -59,6 +60,7 @@ export interface AppState {
     errors: ErrorState,
     message: MessageState,
     numberPanelOffset: NumberPanelOffsetState,
+    pickedTicket: SelectedTicketState
 }
 
 export interface NumberPanelOffsetState {

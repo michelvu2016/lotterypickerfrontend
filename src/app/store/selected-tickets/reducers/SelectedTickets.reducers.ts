@@ -7,21 +7,21 @@ import { Ticket } from '../models/selected-tickets.models';
 
 
 export interface SelectedTicketState extends EntityState<Ticket> {
-    selectedPickedDate: string 
+     
 }
 
-export interface SelectedTicketsState extends AppState {
-    selectedTickets: SelectedTicketState
-}
+//export interface SelectedTicketsState extends AppState {
+//    selectedTickets: SelectedTicketState
+//}
 
 
-function selectPickDate(ticket: Ticket) {
-    return ticket.forDrawnDate;
+function selectTicketId(ticket: Ticket) {
+    return ticket.ticketId;
 }
 
 
 const ticketEntityAdapter: EntityAdapter<Ticket> = createEntityAdapter<Ticket>({
-    selectId: selectPickDate
+    selectId: selectTicketId
 });
 
 
@@ -39,10 +39,8 @@ const reducerHub = createReducer(
     }),
     on(deleteTicketsAction, (state, {ticketId}) => {
         return ticketEntityAdapter.removeOne(ticketId, state);
-    }),
-    on(addTicketAction, (state, {selectedTicket}) => {
-        return ticketEntityAdapter.addOne(selectedTicket, state);
     })
+    
 
 
 )

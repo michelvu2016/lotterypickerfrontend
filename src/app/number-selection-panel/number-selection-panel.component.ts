@@ -142,4 +142,12 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
     this.clearTheTicketToBeHighlighed()
  }
 
+ /**
+  * Put the last drawn numbers back to current
+  */
+ resetLastDrawnNumber() {
+    this.store.dispatch(fromActions.resetToCurrentDrawnTicketAction())
+ } 
+
+
 }

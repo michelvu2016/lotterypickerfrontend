@@ -1,6 +1,6 @@
 <div class="numberPanel" *ngIf="numberList?.length"> 
 <table class="table table-bordered text-center pastDrawnNumber panel-border">
-        <tr *ngFor="let numberSet of numberList; let i = index" (click) = "rowClick(i)">
+        <tr *ngFor="let numberSet of numberList; let i = index" >
           <td *ngFor="let num of numberSet; let j = index">
             
             <app-number-control [number]="num"
@@ -11,6 +11,7 @@
             </app-number-control>
 
           </td>
+          <td><i class="material-icons" (click) = "rowClick(i)">flight</i></td>
         </tr>
 
 

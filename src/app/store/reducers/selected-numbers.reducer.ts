@@ -46,8 +46,9 @@ const initialTicketToBeHighLightState : fromActions.TicketToHighLightState = {
 }
 
 
-const lastDrawnNumberStoreInitialState: fromActions.LastDrawnNumberState = {
-  lastDrawnNumbers : null
+const lastDrawnNumberStoreInitialState: fromActions.LastDrawnNumberState & fromActions.LastDrawnNumbersDisplayState = {
+  lastDrawnNumbers : null,
+  ticketNumbersForDisplay: null,
 }
 
 const errorInitialState: fromActions.ErrorState = {
@@ -92,15 +93,22 @@ export const lastDrawnNumberReducer = createReducer(
     })),
   on(fromActions.resetLastDrawnNumberAction, (state, action) => ({
           ...state,
-          lastDrawnNumbers: [],
+          lastDrawnNumbers: null,
           ticketNumbersForDisplay: null,
         })),
   on(fromActions.replayPastTicketAction, (state, action) => (
      {
         ...state,
-        ticketNumbersForDisplay: setCurrentDrawnToPastTicket(state.lastDrawnNumbers, action.ticketIndex)
+        ticketNumbersForDisplay: setCurrentDrawnToPastTicket(state.ticketNumbersForDisplay,
+           action.ticketIndex)
      }
-  ))
+  )),
+  on(fromActions.resetToCurrentDrawnTicketAction, (state, action) => (
+    {
+        ...state,
+        ticketNumbersForDisplay: {...state.lastDrawnNumbers},
+    }
+  ) )
 
   )
 

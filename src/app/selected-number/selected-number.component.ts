@@ -10,6 +10,11 @@ import { Store } from '@ngrx/store';
 import { SelectedNumbers } from '../models/SelectedNumbers';
 import { SelectedNumbersAction, TicketState, ticketSelectingAction } from '../store/actions/selected-numbers.action';
 import { startWith, filter, tap } from 'rxjs/operators';
+import { SelectedTicketState } from '../store/selected-tickets/reducers/SelectedTickets.reducers';
+import { fromActions } from '../store';
+import { selectedTicketActions } from '../store/selected-tickets';
+import { Ticket } from '../store/selected-tickets/models/selected-tickets.models';
+
 
 @Component({
   selector: 'app-selected-number',
@@ -29,6 +34,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   @Input() ticketId: any;
 
   private prevSelectedNumber: string[] = [];
+  newTicket: boolean = true;
 
   trashBin = [];
   highlightNumberFlag = false;
@@ -38,7 +44,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   constructor(private numberPanelService: NumberPanelService,
     private selectedNumberService: SelectedNumberService,
     private selectedNumbersStore: Store<{ selectedNumbers: SelectedNumbers }>,
-    private selectedTicketStore: Store<TicketState>
+    private selectedTicketStore: Store<SelectedTicketState>
   ) {
 
   }
@@ -170,5 +176,37 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
       action
     );
   }
+
+  /**
+   * 
+   */
+  submitNumber() {
+    const ticket: Ticket = {
+      forDrawnDate: new Date().toLocaleDateString(),
+      numbers: this.numbers.slice(),
+      ticketId: this.ticketId,
+      mega: null
+
+    }
+
+    if (!this.newTicket) {
+      this.selectedTicketStore.dispatch(selectedTicketActions.updateTicketAction({
+        updateSelectedTicket: {
+           id: this.ticketId,
+           changes: {
+              numbers: this.numbers
+           }
+        }
+      
+      }))
+    } else {
+      this.selectedTicketStore.dispatch(selectedTicketActions.addTicketAction({selectedTicket: ticket}))
+      this.newTicket = false;
+    }
+
+
+  }
+
+
 }
 

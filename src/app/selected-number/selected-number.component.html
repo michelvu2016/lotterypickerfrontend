@@ -21,11 +21,15 @@
              </span>
 
         </span>
-          <i class="material-icons"
+          <i class="material-icons pointer-cursor"
           (click)="remove()">clear</i>
-            
-
+          
+          <i class="material-icons pointer-cursor" (click)="submitNumber()"
+            *ngIf="numbers.length == 5"
+          >done</i>
+<!--
            <input type="radio" (click)="turnOnOffHighlight()"/>
+-->
            <span class="trash"
                 cdkDropList
                #trash='cdkDropList'
@@ -34,6 +38,7 @@
                  (cdkDropListDropped)="drop($event)">
                   <span cdkDrag>Trash</span>
            </span>
+          
            <span>
             <app-message-board  [messageSource] = "{ticketId: this.ticketId, msgSource:this.messsageObservable(), multiplexMsg:true}"></app-message-board>
 
