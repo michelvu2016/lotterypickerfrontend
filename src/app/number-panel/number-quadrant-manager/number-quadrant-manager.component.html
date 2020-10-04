@@ -1,25 +1,10 @@
-<div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-    <div class="panel">
+<mat-drawer-container>
+    <mat-drawer #drawer class="drawer-spec" [mode]="'side'">
+        <app-side-nav></app-side-nav>
+    </mat-drawer>
+    <mat-drawer-content>
+        <button mat-raised-button color="primary" (click)="toggleDrawer(drawer)">Toggle Drawer</button>
+        <app-number-quadrant-manager-content></app-number-quadrant-manager-content>
 
-    
-      
-      <div *ngFor="let panelNumber of panelIndexList; let i = index">
-      <app-number-quadrant
-        
-        [index]="panelNumber"
-        (doneDisplayNumber) = "onDoneDisplayPanel($event, panelIndexList)"
-      (overNumberEvent)="onOverNumber($event)"
-        (notifyCurrentNumberEvent)="onNotifyCurrentDrawnNumber()"
-        >
-
-      </app-number-quadrant>
-    </div>
-    
-    </div>
-    
-
-  </div>
-
-</div>
-
+    </mat-drawer-content>
+</mat-drawer-container>

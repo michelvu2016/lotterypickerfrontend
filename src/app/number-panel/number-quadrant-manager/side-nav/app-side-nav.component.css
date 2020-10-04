@@ -1,0 +1,13 @@
+.table-container {
+    text-align: center;
+     height: 300px;
+     width: 90%;
+     margin: 0 auto;
+     margin-top: 10px;
+     overflow: auto;
+}
+
+
+table {
+    width: 100%;
+}

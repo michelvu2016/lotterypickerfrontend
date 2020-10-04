@@ -12,6 +12,8 @@ import _ from 'lodash';
 import * as TicketInQuadrantAnalysisResult  from '../models/TicketInQuadrantAnalysisResult';
 import {fromActions, fromReducer, fromSelectors} from '../store';
 import { Store } from '@ngrx/store';
+import { SelectedTicketState } from '../store/selected-tickets/reducers/SelectedTickets.reducers';
+import {selectedTicketReducer, selectedTicketActions, selectedTicketModels} from '../store/selected-tickets';
 
 type TicketQuadAnalysisResultReader =
   TicketInQuadrantAnalysisResult.TicketInQuadrantAnalysisResultReader;
@@ -19,11 +21,16 @@ type TicketQuadAnalysisResultReader =
 type TicketQuadAnalysisResultWriter = 
   TicketInQuadrantAnalysisResult.TicketInQuadrantAnalysisResultWriter;
 
-
+type LocalObserverLike = {
+  next: (param: any) => void ,
+  error: (error: any) => void,
+  complete: () => void
+}
 
 @Injectable()
 export class NumberPanelService
 {
+    dataAvailable = false;
     drawnNumbers: string[][] = [];
     currentDrawnNumber: string[] = [];
     numberBucket: string[] = [];
@@ -78,7 +85,11 @@ export class NumberPanelService
      proposedTicket: string[]
   }> [] = [];
 
-   constructor (private dataService: DataService, private store: Store<fromActions.AppState>)
+   constructor (private dataService: DataService, 
+            private store: Store<fromActions.AppState>,
+            private selectedTicketStore: Store<SelectedTicketState>,
+            private systemMessageStore: Store<fromActions.SystemMessageState>,
+            private messageStore: Store<fromActions.MessageState>)
    {
       //console.log('>>>Number-panel service:', new Date().getMilliseconds());
    }
@@ -203,11 +214,13 @@ export class NumberPanelService
    *
    */
   reset() {
+    this.dataAvailable = false;
     this.drawnNumbers = [];
     this.currentDrawnNumber = [];
-    //this.messageQueue.push("");
+    this.postMsg("");
     this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
     this.dataReadyBroadcast();
+    this.selectedTicketStore.dispatch(selectedTicketActions.deleteAllTicketAction({mode: "all"}))
    }
 
 
@@ -224,8 +237,8 @@ export class NumberPanelService
     this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
     //this.currentDrawnNumberObservable.complete(); //Call complete right after will sabotage the delivery of the data
     //console.log(">>>current drawn number:", this.currentDrawnNumber);
-    this.setupClickUpdate();
-    this.setupMessageObservable();
+    //this.setupClickUpdate();
+    //this.setupMessageObservable();
     this.dataReadyBroadcast();
   }
 
@@ -238,20 +251,22 @@ export class NumberPanelService
   private initProcess() {
     if(!this.initialized) {
          console.log(">>>>[NumberPanelService] register selector");
+         this.oneTimeSetupProcess();
           this.store.select(fromSelectors.lastDrawnNumberSelector)
           .subscribe((data) => {
             console.log(">>>>[NumberPanelService] refresh panel data:", data);
             this.store.dispatch(fromActions.messageAction({msg: "Processing data..."}));
             this.dataProcessingSetup(data);
             this.store.dispatch(fromActions.messageAction({msg: ""}));
+            this.dataAvailable = true;
           });
 
-          console.log(">>>>Setup the error selector subscriber")
-          this.store.select(fromSelectors.errorSelector)
-          .subscribe(error => {
-              console.log(">>>>[NumberPanelService] error from store:", error);
-              this.messageQueue.push(error)
-              });
+         // console.log(">>>>Setup the error selector subscriber")
+         // this.store.select(fromSelectors.errorSelector)
+        //  .subscribe(error => {
+           //   console.log(">>>>[NumberPanelService] error from store:", error);
+          //    this.messageQueue.push(error)
+          //    });
           this.initialized = true;
     }
 
@@ -334,8 +349,8 @@ export class NumberPanelService
         this.currentDrawnNumberObservable.next(this.currentDrawnNumber.slice());
         //this.currentDrawnNumberObservable.complete(); //Call complete right after will sabotage the delivery of the data
         //console.log(">>>current drawn number:", this.currentDrawnNumber);
-        this.setupClickUpdate();
-        this.setupMessageObservable();
+        //this.setupClickUpdate();
+        //this.setupMessageObservable();
         this.dataReadyBroadcast();
         observer.next();
 
@@ -344,10 +359,15 @@ export class NumberPanelService
       });
 
     });
+  }
 
-
-
-    }
+  /**
+   * 
+   */
+  oneTimeSetupProcess() {
+    this.setupClickUpdate();
+    this.setupMessageObservable();
+  }
 
   isDataReady() {
     return this.drawnNumbers.length > 0 && this.currentDrawnNumber.length > 0;
@@ -409,6 +429,7 @@ export class NumberPanelService
   dataReadyBroadcast() {
 
      //console.log('>>>>Broadcast to all listeners...');
+     console.log(">>>>[NumberPanelService] Broadcast to all listeners...");
      let observable = interval(200).pipe(take(1));
      observable = observable.pipe(multicast(() => new Subject<any>()));
      for (const observer of this.appInitObserverQ) {
@@ -420,13 +441,20 @@ export class NumberPanelService
    }
 
    registerDataReadyNotification(callback) {
-      this.appInitObserverQ.push(this.createObserverWrapper(callback));
+      
+      const observer: LocalObserverLike = this.createObserverWrapper(callback)
+      this.appInitObserverQ.push(observer);
+      if(this.dataAvailable)
+      {
+         observer.next(undefined);
+      }
      
    }
    
-   private createObserverWrapper(callback) {
+   private createObserverWrapper(callback): LocalObserverLike {
        return {
           next(value) { callback(value); },
+          error(error) {},
           complete() {}
        };
    }
@@ -449,18 +477,31 @@ loadData(gameName, callback)
 
 
 
-  this.messageQueue.push("Loading the data from the backend");
+  //this.messageQueue.push("Loading the data from the backend");
+
+ this.postSystemMsg("Loading the data from the backend");
+
   this.dataService.getLastResults_usingRxjs(
      gameName)
      .subscribe(
         (data) => {
-           this.messageQueue.push("Receive data from the backend service");
+          this.postSystemMsg("Receive data from the backend service");
            callback(data);
         },
-        (error) => {this.messageQueue.push(error)},
+        (error) => {this.postSystemMsg(error)},
         () => {}
      );
     
+}
+
+/**
+ * 
+ * @param msg 
+ */
+postSystemMsg(msg: string) {
+  this.systemMessageStore.dispatch(fromActions.sendSystemMessageAction({
+    systemMessage: "Loading the data from the backend"
+ }));
 }
 
 
@@ -472,15 +513,15 @@ loadData(gameName, callback)
    loadData_v1_3_3(gameName, callback)
    {
      this.reset();
-     this.messageQueue.push("Loading the data from the backend");
+     this.postSystemMsg("Loading the data from the backend");
      this.dataService.getLastResults_usingRxjs(
         gameName)
         .subscribe(
            (data) => {
-              this.messageQueue.push("Receive data from the backend service");
+            this.postSystemMsg("Receive data from the backend service");
               callback(data);
            },
-           (error) => {this.messageQueue.push(error)},
+           (error) => {this.postSystemMsg(error)},
            () => {}
         );
        
@@ -527,18 +568,19 @@ loadData(gameName, callback)
 
    setupClickUpdate()
    {
+       //console.log("[NumberPanelService] setupClickUpdate called");
        this.selectedNumberObservable = new Observable<any>( (observer) => {
          
           let timeoutId = 0;
          
                timeoutId = window.setInterval(() => {
-
+                //console.log("[NumberPanelService] this.numberBucket.length:", this.numberBucket.length);
                  if(this.numberBucket.length > 0){
-
+                   //console.log("[NumberPanelService] setupClickUpdate next called");
                    observer.next(this.numberBucket.pop());
                  }
 
-               }, 200);
+               }, 500);
                
 
           return {unsubscribe(): void {
@@ -614,6 +656,20 @@ loadData(gameName, callback)
 
    }
 
+   /**
+    * Post the message to the message store
+    * @param msg 
+    */
+   postMsg(msg:string) {
+    this.messageStore.dispatch(
+      fromActions.messageAction({
+        msg
+      }) 
+      
+       );
+   }
+
+
   getSubsetNumber(startFrom: number, endAt: number)
   {
 
@@ -638,12 +694,18 @@ loadData(gameName, callback)
 
     numberSelected(aNumber: any)
     {
-       //if(!this.matchCurrentDrawnNumber(aNumber)) {
+       if(!this.matchCurrentDrawnNumber(aNumber)) {
          this.numberBucket.push(aNumber);
-       //}
-       //else {
-         // this.messageQueue.push('Selected number has alread been selected for the current ticket.');
-       //}
+       }
+       else {
+
+         this.messageStore.dispatch(
+          fromActions.messageAction({
+            msg: 'Selected number has alread been selected for the current ticket.'
+          }) 
+          
+           );
+       }
     }
     
     matchCurrentDrawnNumber(aNumber: string)

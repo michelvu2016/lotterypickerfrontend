@@ -18,9 +18,9 @@ export class HomeComponent implements OnInit {
     //console.log('runing test now...');
 
     this.dataService.retrieveGameResultFor('10', (data) => {
-       console.log("Data:", data);
+      // console.log("Data:", data);
     }, (error) => {
-        console.log('Error:', error);
+        //console.log('Error:', error);
     });
 
   }

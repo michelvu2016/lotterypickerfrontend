@@ -8,11 +8,13 @@ import {LastDrawnNumber} from '../models/LastDrawnNumber';
 import * as _ from 'lodash';
 import { AsynchProcessExecutorService } from './AsynchProcessExecutor.service';
 import { environment } from '../../environments/environment';
+import { SelectedTicketForSubmit } from '../models/selectedTickets.model';
 
 
 const drawnNumberHistoryUrl = environment.baseUrl+'/api/lastDrawnNumbers';
 const postDrawnNumbersUrl = environment.baseUrl +'/api/lastDrawnTickets';
 const analyzedPastDrawnNumberBaseUrl = environment.baseUrl +'/api/getAnalyzedDrawnNumbers';
+const selectedTicketsUrl = environment.baseUrl +'/api/selectedTicket/save';
 
 const username = 'mvu';
 const password = "cel123";
@@ -393,6 +395,21 @@ export class DataService {
 
   }
 
+ saveSelectedTickets(ticketForSubmit: SelectedTicketForSubmit) {
+    const url = selectedTicketsUrl;
+    const body = JSON.stringify(ticketForSubmit);
+    console.log(">>>Body:", body)
+    const credHeader = this.createBasicAuthHeader('mikevu', 'password');
+    const headers = credHeader.append('Content-type', 'application/json');
+    console.log(">>> [DataService] saveSelectedTickets sending data to server...");
+    this.http.post(url, body, {headers})
+        .subscribe({
+            next: (resp) => console.log(resp),
+            error: (error) => console.log(">>>Error:", error)
+
+        })
+    ; 
+ }
 
 }
 

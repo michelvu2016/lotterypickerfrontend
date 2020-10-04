@@ -1,6 +1,8 @@
-import {Component, Input, OnInit, QueryList, Renderer2, ViewChildren} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, QueryList, Renderer2, ViewChildren} from '@angular/core';
 import {NumberPanelService} from '../../number-panel/number-panel.service';
 import {NumberControlComponent} from '../../number-panel/number-control/number-control.component';
+import { Subject } from 'rxjs';
+
 
 
 @Component({
@@ -12,6 +14,9 @@ export class MegaListComponent implements OnInit {
 
   data: string[] = null;
 
+  @Output() selectedMegaNumberEvent = new EventEmitter<string>();
+  
+ 
   @ViewChildren('numberCoontrolContainer') numberControlComponent: QueryList<NumberControlComponent>;
 
   @Input() numberOfMega: number;
@@ -72,4 +77,13 @@ export class MegaListComponent implements OnInit {
 
 
   }
+
+  /**
+   * 
+   * @param number 
+   */
+  numberSelected(number: string) {
+    this.selectedMegaNumberEvent.next(number);
+  }
+
 }

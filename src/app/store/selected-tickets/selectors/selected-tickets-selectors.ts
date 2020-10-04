@@ -7,7 +7,7 @@ const ticketState = createFeatureSelector<fromReducer.SelectedTicketState>('Sele
 
 export const queryAllSelectedTicketSelector = createSelector (
     ticketState,
-    fromReducer.selectAllPickedTickets
+    fromReducer.selectAllTickets
 );
 
 

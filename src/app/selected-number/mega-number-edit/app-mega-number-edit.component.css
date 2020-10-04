@@ -1,0 +1,13 @@
+.mega-edit-input {
+    width: 2em;
+}
+
+.mega-number {
+    width: 8em;
+    padding: 2px;
+    margin: 0 3px;
+    border: 1px solid red;
+    font-style: normal;
+    font-weight: 300;
+    font-family: Arial, Helvetica, sans-serif;
+}

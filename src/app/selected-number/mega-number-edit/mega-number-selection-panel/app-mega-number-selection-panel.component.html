@@ -1,0 +1,14 @@
+<div class="back-drop">
+    
+</div>
+<div class="panel">
+    <div class="panal-control"><span class="close"
+        (click) = "closePanel()"
+        >
+        <i class="material-icons.md-18">X</i></span></div>
+    <div class="panel-manager">
+        <div>Mega Number listing</div>
+        <app-mega-manager (selectedNumberEmitter)="selectedMegaNumber($event)"></app-mega-manager>
+    </div>
+    
+</div>

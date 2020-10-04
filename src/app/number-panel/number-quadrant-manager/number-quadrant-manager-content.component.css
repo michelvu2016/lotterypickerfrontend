@@ -1,0 +1,21 @@
+.panel {
+    margin:0;
+    padding:0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+
+
+}
+
+@media only screen and (max-width: 1520px) {
+    .panel {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+
+@media only screen and (max-width: 1024px) {
+    .panel {
+        grid-template-columns: 1fr;
+    }
+}

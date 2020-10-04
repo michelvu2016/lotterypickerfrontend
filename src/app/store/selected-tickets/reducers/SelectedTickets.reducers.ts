@@ -1,7 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import { EntityState, createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 
-import { addTicketAction, updateTicketAction, deleteTicketsAction} from '../actions/app-selected-tickets.actions';
+import { addTicketAction, updateTicketAction, deleteTicketAction, deleteAllTicketAction} from '../actions/app-selected-tickets.actions';
 import { AppState } from '../../actions/selected-numbers.action';
 import { Ticket } from '../models/selected-tickets.models';
 
@@ -37,9 +37,12 @@ const reducerHub = createReducer(
     on(updateTicketAction, (state, {updateSelectedTicket}) => {
         return ticketEntityAdapter.updateOne(updateSelectedTicket, state);
     }),
-    on(deleteTicketsAction, (state, {ticketId}) => {
+    on(deleteTicketAction, (state, {ticketId}) => {
         return ticketEntityAdapter.removeOne(ticketId, state);
-    })
+    }),
+    on(deleteAllTicketAction, (state, {mode}) => {
+        return ticketEntityAdapter.removeAll(state);
+    }) 
     
 
 
@@ -57,7 +60,7 @@ const {
     selectTotal,
   } = ticketEntityAdapter.getSelectors();
 
-export const selectPickDateSelector = selectIds;
-export const selectAllPickedTickets = selectEntities;
+export const selectTicketIds = selectIds;
+export const selectAllTicketEntities = selectEntities;
 export const selectAllTickets = selectAll;
-export const selectNumberOfTickedPicked = selectTotal;
+export const selectNumberOfTickets = selectTotal;

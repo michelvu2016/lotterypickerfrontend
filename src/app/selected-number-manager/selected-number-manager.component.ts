@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild, ElementRef, Input, HostListener} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ElementRef, Input, HostListener, AfterViewInit} from '@angular/core';
 import {NumberPanelService} from '../number-panel/number-panel.service';
 import {Observable, Subscription} from 'rxjs';
 import _ from 'lodash';
@@ -13,7 +13,7 @@ import { SelectedNumberComponent } from '../selected-number/selected-number.comp
   styleUrls: ['./selected-number-manager.component.css'],
 
 })
-export class SelectedNumberManagerComponent implements OnInit, OnDestroy {
+export class SelectedNumberManagerComponent implements OnInit, AfterViewInit, OnDestroy {
   private selectedNumberSub: Subscription;
   selectedNumberTicket: string[][] = [];
   private selectedNumberTicketSub: Subscription;
@@ -22,6 +22,10 @@ export class SelectedNumberManagerComponent implements OnInit, OnDestroy {
               private commonService: CommonServices) { }
 
   ngOnInit() {
+
+  }              
+
+  ngAfterViewInit() {
     //console.log('>>>selected-number-manager-comp:', this.selectedNumberTicket);
     const thisObject = this;
 
@@ -35,7 +39,7 @@ export class SelectedNumberManagerComponent implements OnInit, OnDestroy {
       this.selectedNumberSub = thisObject.numberPanelService.selectedNumberObservable
         .subscribe({
           next(num) {
-
+           // console.log("[SelectedNumberManagerComponent] ngAfterViewInit receive and pass the clicked number to selectedNumberService");
             thisObject.selectedNumberService.addOrUpdate(
               thisObject.commonService.pullNumberOut(num)
             );

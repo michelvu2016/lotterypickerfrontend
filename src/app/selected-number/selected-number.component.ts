@@ -1,6 +1,6 @@
-import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, AfterViewInit} from '@angular/core';
+import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, AfterViewInit, Injectable} from '@angular/core';
 import {NumberPanelService} from '../number-panel/number-panel.service';
-import {Observable, Subscription, timer, interval} from 'rxjs';
+import {Observable, Subscription, timer, interval, Subject} from 'rxjs';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 
@@ -14,6 +14,9 @@ import { SelectedTicketState } from '../store/selected-tickets/reducers/Selected
 import { fromActions } from '../store';
 import { selectedTicketActions } from '../store/selected-tickets';
 import { Ticket } from '../store/selected-tickets/models/selected-tickets.models';
+import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
+import { CommonServices } from '../common/common.services';
+
 
 
 @Component({
@@ -33,6 +36,8 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   @Input() ticketNumber: number;
   @Input() ticketId: any;
 
+  private surrogatedTicketId: number;
+
   private prevSelectedNumber: string[] = [];
   newTicket: boolean = true;
 
@@ -43,8 +48,10 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
   constructor(private numberPanelService: NumberPanelService,
     private selectedNumberService: SelectedNumberService,
+    private commonService: CommonServices,
     private selectedNumbersStore: Store<{ selectedNumbers: SelectedNumbers }>,
-    private selectedTicketStore: Store<SelectedTicketState>
+    private selectedTicketStore: Store<SelectedTicketState>,
+    private clearSelectedTicketEffect: FinalSelectedTicketListMonitorEffect
   ) {
 
   }
@@ -52,6 +59,9 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   ngOnInit() {
 
   }
+
+
+  
 
   ngAfterViewInit() {
     const ticketComparer : (s: string[], t: string[] ) => boolean =
@@ -85,6 +95,10 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
         }
      )
 
+     this.clearSelectedTicketEffect.deleteAllTicketsDetectedSubject.pipe(
+       tap(() => console.log("[SelectedNumberComponent] clear all tickets signal received"))
+     ).subscribe(() => this.newTicket = true);
+
   }
 
   componentSelected() {
@@ -101,7 +115,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
   ngOnChanges(changes: SimpleChanges): void {
 
-     console.log("[SelectedNumberComponent] onchanges:",changes);
+     //console.log("[SelectedNumberComponent] onchanges:",changes);
   }
 
   currentNumberIndex() {
@@ -112,6 +126,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
     this.numbers = [];
     this.updateSelectedTicketOnStore();
     this.selectedNumberService.removeTicket(this.ticketId);
+    this.selectedTicketStore.dispatch(selectedTicketActions.deleteTicketAction({ticketId: this.surrogatedTicketId}));
   }
 
   onClick() {
@@ -128,22 +143,22 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
   drop(event: CdkDragDrop<string[]>) {
     if(event.previousContainer === event.container) {
-      console.log(`>>>moveItemInArray data: ${event.container.data} 
-              prevIndex: ${event.previousIndex} curIndex ${event.currentIndex}`);
+      //console.log(`>>>moveItemInArray data: ${event.container.data} 
+        //      prevIndex: ${event.previousIndex} curIndex ${event.currentIndex}`);
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      console.log(`>>>transferArrayItem prevData: ${event.previousContainer.data} 
-          data: ${event.container.data} prevIndex ${event.previousIndex}
-           curIndex: ${event.currentIndex}`);
+      //console.log(`>>>transferArrayItem prevData: ${event.previousContainer.data} 
+          //data: ${event.container.data} prevIndex ${event.previousIndex}
+           //curIndex: ${event.currentIndex}`);
       transferArrayItem(event.previousContainer.data,
         event.container.data,
         event.previousIndex, event.currentIndex);
-        console.log("[SelectedNumberComponent] numbers:", this.numbers);
+        //console.log("[SelectedNumberComponent] numbers:", this.numbers);
     }
   }
 
   onTicketNumberClick(event:any) {
-     console.log(">>>[SelectedNumberComponent] onTicketNumberClick: ", event);
+     //console.log(">>>[SelectedNumberComponent] onTicketNumberClick: ", event);
   }
 
   mouseOverNumber() {
@@ -154,7 +169,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
    * 
    */
   private updateSelectedTicketOnStore() {
-    console.log("[SelectedNumberComponent] updateSelectedTicketOnStore numbers:", this.numbers);
+    //console.log("[SelectedNumberComponent] updateSelectedTicketOnStore numbers:", this.numbers);
     const payload : TicketState = {
       selectedNumber: this.numbers.slice()
     }
@@ -181,18 +196,21 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
    * 
    */
   submitNumber() {
+    //console.log("[SelectedNumberComponent] submitNumber() called");
+  
     const ticket: Ticket = {
       forDrawnDate: new Date().toLocaleDateString(),
       numbers: this.numbers.slice(),
-      ticketId: this.ticketId,
+      ticketId: null,
       mega: null
 
     }
 
     if (!this.newTicket) {
+      ticket.ticketId = this.surrogatedTicketId;
       this.selectedTicketStore.dispatch(selectedTicketActions.updateTicketAction({
         updateSelectedTicket: {
-           id: this.ticketId,
+           id: this.surrogatedTicketId,
            changes: {
               numbers: this.numbers
            }
@@ -200,6 +218,8 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
       
       }))
     } else {
+      this.surrogatedTicketId = this.generateTicketId();
+      ticket.ticketId = this.surrogatedTicketId;
       this.selectedTicketStore.dispatch(selectedTicketActions.addTicketAction({selectedTicket: ticket}))
       this.newTicket = false;
     }
@@ -207,6 +227,35 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
   }
 
+  /**
+   * Generate the surrogated ticket id using the ticket number and the elapsed seconds
+   */
+  generateTicketId() {
+     const curDate = new Date();
+
+     const timeStamp = curDate.getHours() + curDate.getMinutes() + curDate.getSeconds(); 
+
+
+
+     return +(this.numbers.join("")) + timeStamp; 
+
+  }
 
 }
 
+@Injectable({providedIn: "root"})
+export class FinalSelectedTicketListMonitorEffect {
+   
+    deleteAllTicketsDetectedSubject = new Subject<any>();
+
+   constructor(private actions$: Actions) {
+   }
+
+   clearSelectedTickets$ = createEffect(() => this.actions$.pipe(
+      ofType(selectedTicketActions.deleteAllTicketAction),
+      tap(() => console.log("[FinalSelectedTicketListMonitorEffect] selectedTicketActions.deleteAllTicketAction detected.")),
+      tap(() => this.deleteAllTicketsDetectedSubject.next())
+
+    ), {dispatch: false});
+
+}

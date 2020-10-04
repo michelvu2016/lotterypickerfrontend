@@ -6,8 +6,8 @@ import { state } from '@angular/animations';
 
 
 export const highlightCurrDrawnNumbers = (state) => {
-    console.log("[highlightCurrDrawnNumbers]  state:", state);
-    console.log("[highlightCurrDrawnNumbers]  state.highlightCurDrawnNumber", state.highlightCurDrawnNumber);
+    //console.log("[highlightCurrDrawnNumbers]  state:", state);
+    //console.log("[highlightCurrDrawnNumbers]  state.highlightCurDrawnNumber", state.highlightCurDrawnNumber);
     return state.highlightCurDrawnNumber;
 }
 
@@ -15,7 +15,7 @@ export const highlightCurrDrawnNumbers = (state) => {
 export const selectHighlightCurrDrawnNumbers = createSelector(
     highlightCurrDrawnNumbers,
     (highlightCurDrawnNumber) => {
-        console.log("[selectHighlightCurrDrawnNumbers] selectedFlagValue:",  highlightCurDrawnNumber);
+       // console.log("[selectHighlightCurrDrawnNumbers] selectedFlagValue:",  highlightCurDrawnNumber);
         return highlightCurDrawnNumber.highlightCurrentDrawnNumber;
     }
 );
@@ -52,4 +52,14 @@ export const errorSelector = createSelector (
 export const messageSelector = createSelector (
     (state: AppState) => state.message,
     (state: fromActions.MessageState) => state.msg
+)
+
+export const systemMessageSelector = createSelector(
+    (state: AppState) => state.systemMessage,
+    (state: fromActions.SystemMessageState) => state.systemMessage
+);
+
+export const selectedMegaNumberSelector = createSelector(
+    (state: AppState) => state.selectMegaNumber,
+    (state: fromActions.SelectMegaNumberState) => state.megaNumber
 )

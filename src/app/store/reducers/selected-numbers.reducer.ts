@@ -35,7 +35,7 @@ const initialSelectedTicketState : fromActions.TicketState = {
 
 const _ticketSelectingReducer = createReducer(initialSelectedTicketState,
   on(fromActions.ticketSelectingAction, (state, action) => {
-     console.log("[ticketSelectingReducer] invoked: ", action.selectedNumber);
+    // console.log("[ticketSelectingReducer] invoked: ", action.selectedNumber);
     return ({...state, selectedNumber: action.selectedNumber}) 
   })
    );
@@ -63,6 +63,13 @@ const numberQuadrantOffsetInitialState: fromActions.NumberPanelOffsetState = {
     offset: 0
 }
 
+const systemMessageInitialState: fromActions.SystemMessageState = {
+  systemMessage: null
+}
+
+const selectMegaNumberInitialState: fromActions.SelectMegaNumberState = {
+  megaNumber: null
+}
   //Return the reducer
 export function ticketSelectingReducer(state, action) {
    return _ticketSelectingReducer(state, action);
@@ -137,7 +144,7 @@ export const lastDrawnNumberReducer = createReducer(
   */
   const setCurrentDrawnToPastTicket = (pastTickets, offset: number) => {
 
-      console.log("[selectedNumberReducer] setCurrentDrawnToPastTicket pastTickets:", pastTickets);
+      //console.log("[selectedNumberReducer] setCurrentDrawnToPastTicket pastTickets:", pastTickets);
 
       const newPastTickets = {}
       newPastTickets['lastDrawnNumberList'] = pastTickets['numLine'+offset];
@@ -173,3 +180,15 @@ export const numberPanelOffsetReducer = createReducer(
      return ({...state, offset: action.offset})
   })
 )
+
+export const systemMessageReducer = createReducer (
+ systemMessageInitialState,
+ on(fromActions.sendSystemMessageAction, (state, action) => {
+   return ({...state, systemMessage: action.systemMessage});
+ })  
+);
+
+export const selectMegaNumberReducer = createReducer(
+  selectMegaNumberInitialState,
+  on(fromActions.selectMegaNumberAction, (state, action) => ({...state, megaNumber: action.megaNumber}))
+);

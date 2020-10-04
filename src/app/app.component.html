@@ -1,5 +1,7 @@
 <div class="container-fluid">
-  <app-ticket-assembling-panel cdkDrag></app-ticket-assembling-panel>
+  <app-mega-number-selection-panel *ngIf="showPanel"></app-mega-number-selection-panel>
+  <app-ticket-assembling-panel 
+  ></app-ticket-assembling-panel>
   
        <app-navigation></app-navigation>
    

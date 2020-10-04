@@ -1,3 +1,5 @@
 <span *ngFor="let num of data; let i = index" class="megaNumberDisplayCell" #numberCoontrolContainer>
-  <app-number-control [number]="num" (numberSelectedEvent)="mouseEvent($event)" #numberCoontrolContainer></app-number-control>
+  <app-number-control [number]="num" (numberSelectedEvent)="mouseEvent($event)" 
+  (numberClickEvent)="numberSelected($event)"
+  #numberCoontrolContainer></app-number-control>
 </span>

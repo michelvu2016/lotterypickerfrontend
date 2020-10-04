@@ -21,7 +21,7 @@ export class NumberPanelComponent implements OnInit, AfterViewInit {
   }
 
   rowClick() {
-     console.log(">>>>Row clicked");
+     //console.log(">>>>Row clicked");
   }
 
   ngAfterViewInit(): void {

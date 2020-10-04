@@ -19,14 +19,18 @@ export class TicketAssemblingPanelComponent implements OnInit, AfterViewInit {
 
   private highlightTicket = false;
   highlightTicketSubject = new Subject<string[]>();
+  highlightTicketSubjectMulticast: Observable<string[]>
 
   constructor(private selectedTicketStore: Store<fromSelectedTicket.AppState>,
               private highlightTicketStore: Store<fromActions.AppState>) { }
 
   ngOnInit(): void {
+    this.highlightTicketSubjectMulticast = this.getMultiCastObs();
   }
 
   ngAfterViewInit() {
+
+
      this.selectedTicketStore.pipe(
        select(selectedTicketSelector),
        delay(100)
@@ -46,7 +50,7 @@ export class TicketAssemblingPanelComponent implements OnInit, AfterViewInit {
         })
      )
      .subscribe(ticket => {
-        console.log(">>>>[TicketAssemblingPanelComponent] ngAfterViewInit, state: ", ticket);
+        //console.log(">>>>[TicketAssemblingPanelComponent] ngAfterViewInit, state: ", ticket);
         
         this.highlightTicketSubject.next(this.numberInTicket);
         })
@@ -60,25 +64,30 @@ export class TicketAssemblingPanelComponent implements OnInit, AfterViewInit {
    * 
    */
   getTicketMultiCastObs(name?: string) : Observable<string[]> {
-    console.log(">>>[TicketAssemblingPanelComponent] getTicketMultiCastObs() invoked by ", name);
-     return from(this.highlightTicketSubject).pipe(
-         multicast(new Subject()),
-         refCount(),
+    //console.log(">>>[TicketAssemblingPanelComponent] getTicketMultiCastObs() invoked by ", name);
+    // return from(this.highlightTicketSubject).pipe(
+     //    multicast(new Subject()),
+     //    refCount(),
 
-     )
-
+     //)
+    return from(empty());
   }
 
+  getMultiCastObs() {
+    //getTicketMultiCastObs('ticket-assembling-panel.component')
+    //console.log(">>>[TicketAssemblingPanelComponent] getMultiCastObs() invoked");
+    return empty();
+  }
 
   getTicketObs() : Observable<string[]> {
     return new Observable<string[]> (observer => {
      this.highlightTicketSubject.subscribe(
        ticket => {
-        console.log(">>>[TicketAssemblingPanelComponent] getTicketObs() emits to the observer ", ticket);
+        //console.log(">>>[TicketAssemblingPanelComponent] getTicketObs() emits to the observer ", ticket);
            observer.next(ticket)
        },
        error => {
-          console.log(">>>error in [TicketAssemblingPanelComponent] getTicketObs() ", error);
+          //console.log(">>>error in [TicketAssemblingPanelComponent] getTicketObs() ", error);
        }
      )
     });

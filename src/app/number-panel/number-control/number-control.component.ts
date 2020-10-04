@@ -22,6 +22,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
   @Input() number = '';
 
 
+  @Output() numberClickEvent = new EventEmitter<string>();
 
   @Input() displayColorClass = defaultNormalClass;
 
@@ -142,7 +143,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
    
         defaultHighlightClass.split(' ').forEach((className) => {
         this.renderer.addClass(this.thisCompRef.nativeElement, className);
-         console.log(">>>[NumberControlComponent] highlight className:", className);
+        // console.log(">>>[NumberControlComponent] highlight className:", className);
         });
 
   }
@@ -153,7 +154,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
     
       defaultHighlightClass.split(' ').forEach((className) => {
       this.renderer.removeClass(this.thisCompRef.nativeElement, className);
-      console.log(">>>[NumberControlComponent] unhighlight className: ", className);
+      //console.log(">>>[NumberControlComponent] unhighlight className: ", className);
     });
 
 
@@ -165,7 +166,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
    * @param elementRef
    */
   private removeAllClasses(elementRef: ElementRef) {
-    console.log(">>>>number-control.component - remove all classes");
+    //console.log(">>>>number-control.component - remove all classes");
     const thisElm = elementRef.nativeElement;
     const classNames = elementRef.nativeElement.getAttribute('class')
     if (classNames && classNames.length) {
@@ -196,6 +197,7 @@ export class NumberControlComponent implements OnInit, AfterContentInit, AfterVi
   onClick()
   {
      //console.log(">>>Send clicked number:", this.number);
-     this.numberPanelService.numberSelected(this.number);
+     //this.numberPanelService.numberSelected(this.number);
+     this.numberClickEvent.emit(this.number);
   }
 }

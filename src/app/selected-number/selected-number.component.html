@@ -38,9 +38,14 @@
                  (cdkDropListDropped)="drop($event)">
                   <span cdkDrag>Trash</span>
            </span>
-          
            <span>
-            <app-message-board  [messageSource] = "{ticketId: this.ticketId, msgSource:this.messsageObservable(), multiplexMsg:true}"></app-message-board>
+              
+              <app-mega-number-edit></app-mega-number-edit>
+
+
+           </span>
+           <span>
+            <app-message-board  [messageSource] = "generalMessageType"></app-message-board>
 
            </span>
 

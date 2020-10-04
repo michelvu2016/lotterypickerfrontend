@@ -259,7 +259,7 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
                   if (index != -1) {
                    
                     const cls = fromConstants.ticketNumberHighLightCssClass(index);
-                    console.log(">>>[number-quadrant.component] add class to number comp:", cls);
+                    //console.log(">>>[number-quadrant.component] add class to number comp:", cls);
                     comp.addCssClass("drawnNumber-"+(index+1));
                     //comp.displayNumber();
           
@@ -268,7 +268,7 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
               });
              } else {
               const cls =  fromConstants.getClassesUsedForHighlighting();
-              console.log(">>>[NumberQuadrantComponent] remove class on number comp. class:", cls );
+              //console.log(">>>[NumberQuadrantComponent] remove class on number comp. class:", cls );
               this.numberControlComponents.forEach(comp => {
                 
                 comp.removeCssClass(cls);
@@ -297,7 +297,7 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
       this.numberControlComponents.forEach(comp => {
         //console.log(`>>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. comp.number ${comp.number} value.dNumber ${value.dNumber}`);
         if (comp.number === value.dNumber) {
-          console.log(">>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. Invoke displayColorClass on numberControlComponents", highLightClass);
+          //console.log(">>>[number-quadrant.component] refreshNumberCurrentDrawnNumberHighLight. Invoke displayColorClass on numberControlComponents", highLightClass);
           comp.displayColorClass = highLightClass;
           comp.displayNumber();
 
@@ -337,5 +337,8 @@ export class NumberQuadrantComponent implements OnInit, AfterViewInit {
       })
   }
 
+  onNumberClick(number: string) {
+    this.numberPanelService.numberSelected(number);
+  }
 
 }

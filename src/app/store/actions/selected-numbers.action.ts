@@ -4,6 +4,7 @@ import * as constants from '../../constants/constants';
 import { NumberSelectionPanelComponent } from 'src/app/number-selection-panel/number-selection-panel.component';
 import { LastDrawnNumber } from 'src/app/models/LastDrawnNumber';
 import { SelectedTicketState } from '../selected-tickets/reducers/SelectedTickets.reducers';
+import { __String } from 'typescript';
 
 export class SelectedNumbersAction implements Action {
   type: string;
@@ -31,7 +32,11 @@ export const actionNames = {
   message: "[MessageBoardComponent] component] message",
   numberPanelOffset: "[NumberQuadrantComponent component] offset save",
   replayPastTicket: "[NumberPanelService] service replayPastTicket",
-  resetToCurrentDrawnTicket: "[NumberPanelService] service restToCurrentDrawnTicket", 
+  resetToCurrentDrawnTicket: "[NumberPanelService] service restToCurrentDrawnTicket",
+  sendSysemMessageAction : "[System] messaging send",
+  selectMegaNumberAction: "[selected-number component] mega number select",
+  showMegaNumberSelectionPanelAction: "[app-mega-number-selection-panel component] show",
+  hideMegaNumberSelectionPanelAction: "[app-mega-number-selection-panel component] hide",
 }
 
 
@@ -48,7 +53,13 @@ export interface SelectedHighLightNumberState {
   
 }
 
+export interface SystemMessageState {
+  systemMessage: string
+}
 
+export interface SelectMegaNumberState {
+  megaNumber: string
+}
 
 export interface AppState {
     analyzedNumber: any,
@@ -60,7 +71,9 @@ export interface AppState {
     errors: ErrorState,
     message: MessageState,
     numberPanelOffset: NumberPanelOffsetState,
-    pickedTicket: SelectedTicketState
+    pickedTicket: SelectedTicketState,
+    systemMessage: SystemMessageState,
+    selectMegaNumber: SelectMegaNumberState,
 }
 
 export interface NumberPanelOffsetState {
@@ -139,4 +152,24 @@ export const messageAction = createAction (
 export const saveNumberPanelOffsetAction = createAction (
   actionNames.numberPanelOffset,
   props<NumberPanelOffsetState>()
+)
+
+export const sendSystemMessageAction = createAction(
+   actionNames.sendSysemMessageAction,
+   props<SystemMessageState>()
+) 
+
+export const selectMegaNumberAction = createAction (
+  actionNames.selectMegaNumberAction,
+  props<SelectMegaNumberState>()
+)
+
+export const showMegaNumberSelectionPanelAction = createAction (
+  actionNames.showMegaNumberSelectionPanelAction,
+  props<{number: string}>()
+)
+
+export const hideMegaNumberSelectionPanelAction = createAction (
+  actionNames.hideMegaNumberSelectionPanelAction
+
 )

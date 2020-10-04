@@ -1,0 +1,31 @@
+<div class="table-container mat-elevation-z8">
+    <h1>Selected ticket info</h1>
+    <h2>For drawing date:
+        <span *ngIf="noEdit else inputDate" (click)="drawingDateClick()">{{drawingDate}}</span>
+        <ng-template #inputDate>
+            <input #drawDateInput autofocus matInput type="date" [(ngModel)] = "drawingDate" (blur) = "onBlurDrawingDateInput()">
+        </ng-template>
+    </h2>
+    <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="number">
+            <th mat-header-cell *matHeaderCellDef>Main Numbers</th>
+            <td mat-cel *matCellDef="let element">{{element.number}}</td>
+        </ng-container>
+        <ng-container matColumnDef="mega">
+            <th mat-header-cell *matHeaderCellDef>Mega</th>
+            <td mat-cel *matCellDef="let element">{{element.mega}}</td>
+        </ng-container> 
+        <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cel *matCellDef="let element">{{element.status}}</td>
+        </ng-container> 
+              
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true">
+         </tr>
+         <tr mat-row *matRowDef="let row; columns: displayedColumns" ></tr>
+    </table>
+    <div *ngIf="hasTickets()" >
+        <button mat-raised-button color="primary" (click)="saveSelectedTickets()">Submit</button>
+        <button mat-raised-button color="warn" (click)="clearList()">Clear</button>
+    </div>
+</div>

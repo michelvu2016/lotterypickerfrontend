@@ -1,0 +1,8 @@
+<span *ngIf="editMode">
+    <input class="mega-edit-input" type="text" placeholder="mega" 
+    maxlength="2" alt="Mega" [(ngModel)] = "megaNumber"
+    (focus)="onfocus()"
+    autofocus
+>
+</span>
+<span class="mega-number" *ngIf="!editMode">Mega:{{megaNumber}}</span>

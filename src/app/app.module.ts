@@ -4,8 +4,11 @@ import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button'; 
 import { MatSidenavModule} from '@angular/material/sidenav'
+import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule }  from '@angular/material/dialog';
+
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppComponent, ShowMegaNumberSelectionPanelEffect } from './app.component';
 import { NumberPanelComponent } from './number-panel/number-panel.component';
 import {NumberPanelService} from './number-panel/number-panel.service';
 import { NumberControlComponent } from './number-panel/number-control/number-control.component';
@@ -13,7 +16,7 @@ import { NumberDecorDirective } from './tools/number-decor.directive';
 import { NumberQuadrantComponent } from './number-panel/number-quadrant/number-quadrant.component';
 import { NumberQuadrantManagerComponent } from './number-panel/number-quadrant-manager/number-quadrant-manager.component';
 import { CurrentDrawnNumberComponent } from './number-panel/current-drawn-number/current-drawn-number.component';
-import { SelectedNumberComponent } from './selected-number/selected-number.component';
+import { FinalSelectedTicketListMonitorEffect, SelectedNumberComponent } from './selected-number/selected-number.component';
 import { MessageBoardComponent } from './message-board/message-board.component';
 import {DataService} from './tools/data-service';
 import { SelectedNumberManagerComponent } from './selected-number-manager/selected-number-manager.component';
@@ -47,6 +50,10 @@ import { NumberInputFormComponent } from './selected-number-manager/number-input
 import { AppLastDrawnNumbersEffect } from './store/effects/app-last-drawn-numbers.effects';
 import { fromActions } from './store';
 import { from } from 'rxjs';
+import { NumberQuadrantManagerContentComponent } from './number-panel/number-quadrant-manager/number-quadrant-manager-content.component';
+import { AppSideNavComponent } from './number-panel/number-quadrant-manager/side-nav/app-side-nav.component';
+import { AppMegaNumberEditComponent, MegaNumberSelectionServiceEffect } from './selected-number/mega-number-edit/app-mega-number-edit.component';
+import { AppMegaNumberSelectionPanelComponent } from './selected-number/mega-number-edit/mega-number-selection-panel/app-mega-number-selection-panel.component';
 
 
 
@@ -59,6 +66,9 @@ import { from } from 'rxjs';
     NumberDecorDirective,
     NumberQuadrantComponent,
     NumberQuadrantManagerComponent,
+    NumberQuadrantManagerContentComponent,
+    AppSideNavComponent,
+
     CurrentDrawnNumberComponent,
     SelectedNumberComponent,
     MessageBoardComponent,
@@ -68,8 +78,8 @@ import { from } from 'rxjs';
     HomeComponent,
     //NumberQuadrantAnalysisCompoennt,
     NumberInputFormComponent,
-   
-
+    AppMegaNumberEditComponent,
+    AppMegaNumberSelectionPanelComponent,
 
   ],
   imports: [
@@ -93,10 +103,16 @@ import { from } from 'rxjs';
       errors: fromReducers.errorReducer,
       message: fromReducers.messageReducer,
       selectedTickets: selectedTicketReducer,
+      systemMessage: fromReducers.systemMessageReducer,
     }),
     MeganumberModule,
     BrowserAnimationsModule,
-    EffectsModule.forRoot([AppLastDrawnNumbersEffect]),
+    EffectsModule.forRoot([
+        AppLastDrawnNumbersEffect, 
+        FinalSelectedTicketListMonitorEffect,
+        ShowMegaNumberSelectionPanelEffect,
+        MegaNumberSelectionServiceEffect,
+      ]),
     StoreDevtoolsModule.instrument({
        maxAge: 25,
        logOnly: environment.production,
@@ -105,6 +121,8 @@ import { from } from 'rxjs';
     TicketAssemblerModule,
     MatButtonModule,
     MatSidenavModule,
+    MatTableModule,
+    MatDialogModule,
   ],
   providers: [NumberPanelService, 
     DataService, 

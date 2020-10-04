@@ -42,15 +42,15 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
   /**
    **/
   ngOnInit(): void {
-     
+     //console.log("[NumberQuadrantAnalysisCompoennt] ngOnInit");
       
   }
 
   
 
   ngAfterViewInit() {
-
-    this.configTicketInputObs();
+    //console.log("[NumberQuadrantAnalysisCompoennt] ngAfterViewInit");
+    //this.configTicketInputObs();
 
     if(!this.displayClass || this.displayClass?.length == 0) {
        return;
@@ -78,12 +78,14 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
   }
   
   private configTicketInputObs() {
-    console.log(">>>[NumberQuadrantAnalysisCompoennt] configTicketInputObs invoked:");
+    //console.log(">>>[NumberQuadrantAnalysisCompoennt] configTicketInputObs invoked:");
       this.ticketObs.pipe(
         tap(ticket => {
-                console.log(">>>[NumberQuadrantAnalysisCompoennt] ngAfterViewInit ticket for analysis:", ticket);
+                //console.log(">>>[NumberQuadrantAnalysisCompoennt] ngAfterViewInit ticket for analysis:", ticket);
         })
-    ).subscribe((ticket) => this.displayTheAnalysisData(ticket))
+    ).subscribe(
+      //(ticket) => this.displayTheAnalysisData(ticket)
+      )
   }
   
 

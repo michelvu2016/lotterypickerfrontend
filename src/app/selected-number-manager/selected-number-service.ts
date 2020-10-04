@@ -159,7 +159,10 @@ export class SelectedNumberService {
   public addOrUpdate(aNumber: string, performCheck: boolean = true) {
 
     if (performCheck) {
-      if (!this.checkNumber(aNumber, (msg) => this.numberCheckMessageQ.push(msg))) {
+      if (!this.checkNumber(aNumber, (msg) => {
+            //this.numberCheckMessageQ.push(msg);
+            this.numberPanelService.postMsg(msg);
+          })) {
         return;
       }
 
@@ -183,8 +186,8 @@ export class SelectedNumberService {
         );
 
       this.selectedNumberTicketChange.next(this.selectedNumberTicket.slice());
-      this.numberCheckMessageQ.push('Selected number accepted');
-
+      //this.numberCheckMessageQ.push('Selected number accepted');
+      this.numberPanelService.postMsg('Selected number accepted');
   }
 
 

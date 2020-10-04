@@ -11,7 +11,7 @@ export const initialState: fromHighlightCurrDrawnNumbersAction.HighlightState = 
   
 const _highlightCurDrawnNumbersReducer = createReducer(initialState,
   on(fromHighlightCurrDrawnNumbersAction.highlightCurrDrawnNumbersAction, (state, action) => {
-        console.log("_highlightCurDrawnNumbersReducer  triggered");
+       // console.log("_highlightCurDrawnNumbersReducer  triggered");
         return    ( {...state, highlightCurrentDrawnNumber: action.highlightCurrentDrawnNumber})
       }
       )
