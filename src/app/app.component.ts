@@ -1,7 +1,9 @@
-import {AfterContentInit, AfterViewInit, Component, Injectable, Output} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, EventEmitter, Injectable, Output} from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { CommonServices } from './common/common.services';
 import {NumberPanelService} from './number-panel/number-panel.service';
 import {SelectedNumberService} from './selected-number-manager/selected-number-service';
 import { fromActions } from './store';
@@ -18,25 +20,35 @@ export class AppComponent implements AfterViewInit{
 
   showPanel = false;
   number: string;
+  corRelNumber: string;
 
-  @Output() megaNumberOut: string = "";
+
+  @Output() megaNumberOut = "";
 
   constructor(private showMegaNumberSelectionpanelEffect: ShowMegaNumberSelectionPanelEffect,
-    private numberPanelService: NumberPanelService) {
-      showMegaNumberSelectionpanelEffect.selectedNumber$.subscribe(number => {
-          this.number = number;
+    private numberPanelService: NumberPanelService,
+    private corRelNumberStore: Store<fromActions.AppState>,
+    private commonService: CommonServices) {
+      showMegaNumberSelectionpanelEffect.corRelNumber$.subscribe(relNumber => {
+          console.log('[AppComponent] push the relNumber:', relNumber);
+          this.corRelNumber = relNumber;
  
       })
 
       showMegaNumberSelectionpanelEffect.showPanelCommand$.subscribe(command => {
-       
-        this.showPanel = command == "open" ? true : false;
+        if (command === 'open') {
+          this.showPanel = true;
+          this.corRelNumberStore.dispatch(fromActions.setMegaCorRelNumberAction({corRelNumber: this.corRelNumber}))
+        } else {
+          this.showPanel = false;
+          this.corRelNumberStore.dispatch(fromActions.clearMegaCorRelNumberAction())
+        }
     })
 
   }
-  selectedMegaNumber(number) {
-      console.log("[AppMegaNumberSelectionPanelComponent] selectedMegaNumber:", number);
-      this.megaNumberOut = number;
+  selectedMegaNumber_x(aNumber) {
+      console.log('[AppMegaNumberSelectionPanelComponent] selectedMegaNumber:', aNumber);
+      this.megaNumberOut = aNumber;
   }
 
   ngAfterViewInit(): void {
@@ -50,14 +62,14 @@ export class AppComponent implements AfterViewInit{
 export class ShowMegaNumberSelectionPanelEffect {
 
     showPanelCommand$ = new Subject<string>();
-    selectedNumber$ = new Subject<string>();
+    corRelNumber$ = new Subject<string>();
 
     constructor(private actions$: Actions) {}
 
     showMegaNumberSelectionPanelEffect$ = createEffect(() => this.actions$.pipe(
         ofType(fromActions.showMegaNumberSelectionPanelAction),
         tap(action => {
-          this.showPanelCommand$.next(action.number)
+          this.corRelNumber$.next(action.corRelnumber)
           this.showPanelCommand$.next("open")
         })
     ), {dispatch: false});

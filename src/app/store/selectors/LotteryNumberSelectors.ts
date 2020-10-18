@@ -63,3 +63,8 @@ export const selectedMegaNumberSelector = createSelector(
     (state: AppState) => state.selectMegaNumber,
     (state: fromActions.SelectMegaNumberState) => state.megaNumber
 )
+
+export const selectMegaCorRelNumberSelector = createSelector(
+    (state: AppState) => state.megaCorRelNumber,
+    (state: fromActions.MegaCorRelNumberState) => state.corRelNumber
+)

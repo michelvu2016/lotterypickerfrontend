@@ -68,8 +68,14 @@ const systemMessageInitialState: fromActions.SystemMessageState = {
 }
 
 const selectMegaNumberInitialState: fromActions.SelectMegaNumberState = {
-  megaNumber: null
+  megaNumber: null,
+  corRelNumber: null,
 }
+
+const corRelNumberInitialState : fromActions.MegaCorRelNumberState = {
+   corRelNumber: null,
+}
+
   //Return the reducer
 export function ticketSelectingReducer(state, action) {
    return _ticketSelectingReducer(state, action);
@@ -192,3 +198,13 @@ export const selectMegaNumberReducer = createReducer(
   selectMegaNumberInitialState,
   on(fromActions.selectMegaNumberAction, (state, action) => ({...state, megaNumber: action.megaNumber}))
 );
+
+export const setMegaCorRelNumberReducer = createReducer(
+   corRelNumberInitialState,
+   on(fromActions.setMegaCorRelNumberAction, (state, action) => ({...state, corRelNumber: action.corRelNumber}))
+)
+
+export const clearMegaCorRelNumberReducer = createReducer(
+   corRelNumberInitialState,
+   on(fromActions.clearMegaCorRelNumberAction, (state, action) => ({...state, corRelNumber: null}))
+)

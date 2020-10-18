@@ -1,6 +1,6 @@
 import {Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, AfterViewInit, Injectable} from '@angular/core';
 import {NumberPanelService} from '../number-panel/number-panel.service';
-import {Observable, Subscription, timer, interval, Subject} from 'rxjs';
+import {Observable, Subscription, timer, interval, Subject, EMPTY} from 'rxjs';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 
@@ -9,13 +9,14 @@ import {SelectedNumberService} from '../selected-number-manager/selected-number-
 import { Store } from '@ngrx/store';
 import { SelectedNumbers } from '../models/SelectedNumbers';
 import { SelectedNumbersAction, TicketState, ticketSelectingAction } from '../store/actions/selected-numbers.action';
-import { startWith, filter, tap } from 'rxjs/operators';
+import { startWith, filter, tap, delay } from 'rxjs/operators';
 import { SelectedTicketState } from '../store/selected-tickets/reducers/SelectedTickets.reducers';
 import { fromActions } from '../store';
 import { selectedTicketActions } from '../store/selected-tickets';
 import { Ticket } from '../store/selected-tickets/models/selected-tickets.models';
 import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
 import { CommonServices } from '../common/common.services';
+import { selectedMegaNumberSelector } from '../store/selectors/LotteryNumberSelectors';
 
 
 
@@ -27,7 +28,7 @@ import { CommonServices } from '../common/common.services';
 export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit {
 
   @Input() maxNumber = 5;
-  
+  megaNumber: string = null;
   selectedNumberSub: Subscription;
   @Input() numbers: string[];
 
@@ -36,7 +37,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   @Input() ticketNumber: number;
   @Input() ticketId: any;
 
-  private surrogatedTicketId: number;
+  private surrogatedTicketId: number = 0;
 
   private prevSelectedNumber: string[] = [];
   newTicket: boolean = true;
@@ -57,7 +58,14 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   }
 
   ngOnInit() {
-
+      //Compute the unique ticket id
+      this.surrogatedTicketId = this.generateTicketId();
+      EMPTY.pipe(
+        delay(100)
+     ).subscribe(() => {
+       this.surrogatedTicketId = this.generateTicketId();
+       console.log(`[SelectedNumberComponent] surrogatedTicketId: ${this.surrogatedTicketId}`);
+     })
   }
 
 
@@ -98,6 +106,9 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
      this.clearSelectedTicketEffect.deleteAllTicketsDetectedSubject.pipe(
        tap(() => console.log("[SelectedNumberComponent] clear all tickets signal received"))
      ).subscribe(() => this.newTicket = true);
+
+
+     
 
   }
 
@@ -194,6 +205,15 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
   /**
    * 
+   * @param number 
+   */
+  selectedMegaNumber(number: string) {
+    console.log("[SelectedNumberComponent] selectedMegaNumber: ", number);
+    this.megaNumber = number;
+  }
+
+  /**
+   * 
    */
   submitNumber() {
     //console.log("[SelectedNumberComponent] submitNumber() called");
@@ -202,9 +222,11 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
       forDrawnDate: new Date().toLocaleDateString(),
       numbers: this.numbers.slice(),
       ticketId: null,
-      mega: null
+      mega: this.megaNumber
 
     }
+
+ 
 
     if (!this.newTicket) {
       ticket.ticketId = this.surrogatedTicketId;
@@ -212,13 +234,14 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
         updateSelectedTicket: {
            id: this.surrogatedTicketId,
            changes: {
-              numbers: this.numbers
+              numbers: this.numbers,
+              mega: this.megaNumber,
            }
         }
       
       }))
     } else {
-      this.surrogatedTicketId = this.generateTicketId();
+      
       ticket.ticketId = this.surrogatedTicketId;
       this.selectedTicketStore.dispatch(selectedTicketActions.addTicketAction({selectedTicket: ticket}))
       this.newTicket = false;
@@ -233,12 +256,12 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   generateTicketId() {
      const curDate = new Date();
 
-     const timeStamp = curDate.getHours() + curDate.getMinutes() + curDate.getSeconds(); 
+     const range: (number: number) => number[] = n => Array.from({length: n}, (value, key) => key);
+     const randNum: (number: number) => number = n => Math.floor(Math.random() * n);
 
+     const timeStamp = ""+curDate.getHours() + curDate.getMinutes() + curDate.getSeconds(); 
 
-
-     return +(this.numbers.join("")) + timeStamp; 
-
+     return +(range(5).map(n => randNum(n+(n*2))).join("") + timeStamp);
   }
 
 }

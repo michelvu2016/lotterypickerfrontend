@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Inject, Injectable, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Inject, Injectable, Input, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
@@ -9,7 +9,7 @@ import { fromActions } from 'src/app/store';
 
 
 export interface DialogData {
-    megaNumber: string
+    megaNumber: string;
 }
 
 @Component({
@@ -20,6 +20,20 @@ export interface DialogData {
 })
 export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
 
+    @Output() selectedMegaNumber = new EventEmitter<string>();
+    
+    
+    private uniqueId: string = ""; 
+
+    @Input('ticketId')
+    public get ticketId(): number {
+        return +this.uniqueId;
+    }
+    public set ticketId(value: number) {
+        console.log(`[AppMegaNumberEditComponent] ticketId input: ${value}`);
+        this.uniqueId = value.toString();
+    }
+
     megaNumber = "";
     editMode = false;
 
@@ -27,8 +41,31 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
         private commonServices: CommonServices, 
         private showMegaNumberSelectionPanelStore: Store<fromActions.AppState>,
         private selectedMegaNumberEffect: MegaNumberSelectionServiceEffect) {
-            selectedMegaNumberEffect.selectedMegaNumber$.subscribe((number) => this.megaNumber = commonServices.pullNumberOut(number))
+            selectedMegaNumberEffect.selectedMegaNumber$.subscribe(({megaNumber, corRelNumber}) => 
+                {
+                    console.log(`[AppMegaNumberEditComponent] megaNumber: ${megaNumber} corRelNumber: ${corRelNumber} `)
+                    if (this.uniqueId == corRelNumber)
+                        this.setMegaNumber(commonServices.pullNumberOut(megaNumber))
+                });
     }
+
+    /**
+     * 
+     * @param number 
+     */
+    private setMegaNumber(number: string) {
+        this.megaNumber = number;
+        this.emitSelectedMegaNumber();
+    }
+
+
+    /**
+     * 
+     */
+    private emitSelectedMegaNumber() {
+        this.selectedMegaNumber.emit(this.megaNumber);
+    }
+
 
     /**
      * 
@@ -39,7 +76,7 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            this.megaNumber = result;
+            this.setMegaNumber(result);
         });
     }
 
@@ -48,8 +85,8 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
      */
     onfocus() {
         //this.openDialog();
-        this.showMegaNumberSelectionPanelStore.dispatch(fromActions.showMegaNumberSelectionPanelAction({number: this.megaNumber}))
-
+        //this.showMegaNumberSelectionPanelStore.dispatch(fromActions.showMegaNumberSelectionPanelAction({number: this.megaNumber}))
+        
     }
 
     ngOnInit() {
@@ -60,8 +97,22 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
 
     }
 
+    selectFromPanel() {
+        this.editMode = false;
+        this.showMegaNumberSelectionPanelStore
+           .dispatch(
+               fromActions.showMegaNumberSelectionPanelAction({corRelnumber: this.uniqueId})
+               )
+    }
 
+    manuallySelect() {
+        this.editMode = true;
+    }
 
+    onBlur() {
+        this.editMode = false;
+        this.emitSelectedMegaNumber();
+    }
 }
 
 @Component({
@@ -86,7 +137,7 @@ export class MegaSelectionDialog {
 @Injectable()
 export class MegaNumberSelectionServiceEffect {
 
-    selectedMegaNumber$ = new Subject<string>();
+    selectedMegaNumber$ = new Subject<{megaNumber: string, corRelNumber: string}>();
 
     constructor(private actions$: Actions) {
 
@@ -94,7 +145,9 @@ export class MegaNumberSelectionServiceEffect {
 
     megaNumberSelectionEffect$ = createEffect(() => this.actions$.pipe(
         ofType(fromActions.selectMegaNumberAction),
-        tap(action => this.selectedMegaNumber$.next(action.megaNumber))
+        tap(action => {
+            this.selectedMegaNumber$.next({megaNumber: action.megaNumber, corRelNumber: action.corRelNumber})
+        })
     ), {dispatch: false});
 
     }

@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 
 
 export class CommonServices {
@@ -18,6 +19,7 @@ export class CommonServices {
     },
   };
 
+  corRelNumberSubject = new Subject<string>();
 
   /**
    *

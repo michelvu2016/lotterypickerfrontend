@@ -1,8 +1,25 @@
-<span *ngIf="editMode">
-    <input class="mega-edit-input" type="text" placeholder="mega" 
-    maxlength="2" alt="Mega" [(ngModel)] = "megaNumber"
-    (focus)="onfocus()"
-    autofocus
->
+<span>
+    <span class="mega-container">
+        <div class="mega-header">
+            <h3>Mega Number:</h3>
+        </div>
+        <div class="mega-details">
+            <span *ngIf="editMode">
+            <input class="mega-edit-input" type="text" placeholder="mega" 
+            maxlength="2" alt="Mega" [(ngModel)] = "megaNumber"
+            (blur)="onBlur($event)"
+         
+            autofocus
+            >
+            </span>
+            <span class="mega-number" *ngIf="!editMode"
+            (click)="manuallySelect($event)"
+            >{{megaNumber | displayMega}} </span>
+            <span>
+                <button (click)="selectFromPanel($event)">select from panel</button>
+               
+            </span>
+        </div>
+
+    </span>
 </span>
-<span class="mega-number" *ngIf="!editMode">Mega:{{megaNumber}}</span>

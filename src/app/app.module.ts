@@ -54,6 +54,7 @@ import { NumberQuadrantManagerContentComponent } from './number-panel/number-qua
 import { AppSideNavComponent } from './number-panel/number-quadrant-manager/side-nav/app-side-nav.component';
 import { AppMegaNumberEditComponent, MegaNumberSelectionServiceEffect } from './selected-number/mega-number-edit/app-mega-number-edit.component';
 import { AppMegaNumberSelectionPanelComponent } from './selected-number/mega-number-edit/mega-number-selection-panel/app-mega-number-selection-panel.component';
+import { MegaNumberDirective } from './selected-number/mega-number-edit/mega-number.directives';
 
 
 
@@ -80,6 +81,7 @@ import { AppMegaNumberSelectionPanelComponent } from './selected-number/mega-num
     NumberInputFormComponent,
     AppMegaNumberEditComponent,
     AppMegaNumberSelectionPanelComponent,
+    MegaNumberDirective,
 
   ],
   imports: [
@@ -104,6 +106,7 @@ import { AppMegaNumberSelectionPanelComponent } from './selected-number/mega-num
       message: fromReducers.messageReducer,
       selectedTickets: selectedTicketReducer,
       systemMessage: fromReducers.systemMessageReducer,
+      megaCorRelNumber: fromReducers.setMegaCorRelNumberReducer,
     }),
     MeganumberModule,
     BrowserAnimationsModule,

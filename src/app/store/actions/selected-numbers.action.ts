@@ -37,6 +37,8 @@ export const actionNames = {
   selectMegaNumberAction: "[selected-number component] mega number select",
   showMegaNumberSelectionPanelAction: "[app-mega-number-selection-panel component] show",
   hideMegaNumberSelectionPanelAction: "[app-mega-number-selection-panel component] hide",
+  setMegaCorRelNumberAction: "[selected-number.component] meganumber setCorRelNumber",
+  clearMegaCorRelNumberAction: "[selected-number.component] meganumber ClearCorRelNumber",
 }
 
 
@@ -58,6 +60,7 @@ export interface SystemMessageState {
 }
 
 export interface SelectMegaNumberState {
+  corRelNumber: string,
   megaNumber: string
 }
 
@@ -74,10 +77,15 @@ export interface AppState {
     pickedTicket: SelectedTicketState,
     systemMessage: SystemMessageState,
     selectMegaNumber: SelectMegaNumberState,
+    megaCorRelNumber: MegaCorRelNumberState,
 }
 
 export interface NumberPanelOffsetState {
     offset: number
+}
+
+export interface MegaCorRelNumberState {
+   corRelNumber: string,
 }
 
 export interface MessageState {
@@ -166,10 +174,20 @@ export const selectMegaNumberAction = createAction (
 
 export const showMegaNumberSelectionPanelAction = createAction (
   actionNames.showMegaNumberSelectionPanelAction,
-  props<{number: string}>()
+  props<{corRelnumber: string}>()
 )
 
 export const hideMegaNumberSelectionPanelAction = createAction (
   actionNames.hideMegaNumberSelectionPanelAction
 
+)
+
+export const setMegaCorRelNumberAction = createAction(
+   actionNames.setMegaCorRelNumberAction,
+   props<MegaCorRelNumberState>()
+)
+
+export const clearMegaCorRelNumberAction = createAction(
+   actionNames.clearMegaCorRelNumberAction
+   
 )

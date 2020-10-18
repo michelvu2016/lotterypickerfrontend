@@ -40,7 +40,9 @@
            </span>
            <span>
               
-              <app-mega-number-edit></app-mega-number-edit>
+              <app-mega-number-edit 
+                  (selectedMegaNumber)="selectedMegaNumber($event)"
+                  [ticketId]="surrogatedTicketId"></app-mega-number-edit>
 
 
            </span>

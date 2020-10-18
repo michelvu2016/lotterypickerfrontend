@@ -133,7 +133,7 @@ export class DataService {
               this.log("Throw error to retry. count:", count );
               throw resp;
             }
-         } else if (resp.status == "failure") {
+         } else if (resp.status === 'failure') {
            this.log(">>>Failure encounterd","");
             throw resp;
          }
@@ -145,7 +145,7 @@ export class DataService {
       retryWhen(exc => {
         
          return  exc.pipe(
-           map(resp => <{status: string, baton: string, result: string}> resp),
+           map(resp => resp as {status: string, baton: string, result: string}),
            tap(resp => {if (resp.status == "failure") throw resp.result}),
            
            tap(resp => {

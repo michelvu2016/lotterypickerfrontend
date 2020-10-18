@@ -6,8 +6,59 @@
     width: 8em;
     padding: 2px;
     margin: 0 3px;
+    background-color: rgb(68, 60, 60);
     border: 1px solid red;
     font-style: normal;
     font-weight: 300;
     font-family: Arial, Helvetica, sans-serif;
+    color: white;
+}
+
+.mega-container {
+    border: 1px solid rgb(80, 76, 76);
+    padding: 6px;
+    background-color: aqua;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+
+}
+
+.mega-edit-input {
+    width: 5rem;
+}
+
+.mega-details {
+
+    flex: 1 1 30px;
+}
+
+.mega-header {
+ 
+    padding-bottom: 0;
+    margin: 0;
+
+    flex:1 1 30px;
+    height: 30px;
+}
+
+.mega-header h3 {
+    color: black;
+
+}
+
+.mega-container div {
+    margin: 0;
+    padding: 0;
+
+}
+
+.mega-container  button {
+    margin-left: 3px;
+}
+
+.mega-container  button:hover {
+    background-color: coral;
 }
