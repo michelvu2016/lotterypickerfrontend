@@ -1,5 +1,14 @@
 <div class="AnalysisDetails" #field>
   {{label}} <span>{{ticketNumberQuadrantAnalysisResult}}</span>
-  
+</div>
+<div>
+  <div class="jumbotron" *ngIf="ticketNumberInQuadrantAnalysis != null">
+     <div *ngFor="let key of getNumberOfQuadrant()">
+         {{key}}:
+         <span *ngFor="let num of ticketNumberInQuadrantAnalysis[key]">
+             {{num}}
+         </span>
+     </div>
 
+  </div>
 </div>

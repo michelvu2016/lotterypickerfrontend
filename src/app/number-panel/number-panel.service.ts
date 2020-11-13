@@ -183,6 +183,59 @@ export class NumberPanelService
     })
   }
 
+
+  /**
+   * 
+   * @param ticketToCheck 
+   * @param forQuadrantNumber 
+   * @param resultFormatter 
+   */
+  getTicketNumberOccurancesInQuadrant<R>(ticketToCheck: string[],
+    forQuadrantNumber: number, 
+    accumulator: (finalAcc: {}, tempAcc: {}) => R,
+    resultFormatter: (result: TicketQuadAnalysisResultReader) => R):
+    Promise<R> {
+
+    const resultCreator = (quadrantNumber) =>
+      TicketInQuadrantAnalysisResult
+        .TicketInQuadrantAnalysisResultFactory
+        .createTicketInQuadrantAnalysisResultWriter(quadrantNumber);
+
+    const resultCalculator = () => {
+      const result = resultCreator(forQuadrantNumber);
+      this.getTicketNumberForQuadrant(forQuadrantNumber).forEach(ticket => {
+        ticketToCheck.forEach(number => {
+          if (this.ticketContainsNumber(ticket, number)) {
+            result.addTkNumberOccurance(number);
+            result.addNumberOfOccurance();
+          }
+          // if (ticket.includes(number)) {
+          //   result.addTkNumberOccurance(number);
+          //   result.addNumberOfOccurance();
+          // }
+        })
+      });
+      return result;
+    }
+
+    const toReader = (writer) => TicketInQuadrantAnalysisResult
+      .TicketInQuadrantAnalysisResultFactory
+      .writerToReader(writer);
+
+    //Invoke and return the result
+    return new Promise((resolve, reject) => {
+           setTimeout(() => {
+             resolve(
+               resultFormatter(
+               toReader(
+                   resultCalculator()
+                 )
+                 )
+             );
+          }, 200)
+    })
+  }
+
   /**
    *
    * @param forCmd

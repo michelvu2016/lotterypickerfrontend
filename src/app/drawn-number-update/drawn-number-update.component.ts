@@ -1,10 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import {DataService} from '../tools/data-service';
 import * as _ from 'lodash';
 import {LastDrawnNumber} from '../models/LastDrawnNumber';
 import {CommonServices} from '../common/common.services';
 import {ActivatedRoute, Params} from '@angular/router';
-import {switchMap} from 'rxjs/operators';
+import {delay, switchMap, tap} from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { LastNumberOfTicketInfo } from '../common/appTypes';
+import { ThrowStmt } from '@angular/compiler';
 
 class DomainTicketType {
 
@@ -19,20 +22,29 @@ class DomainTicketType {
   templateUrl: './drawn-number-update.component.html',
   styleUrls: ['./drawn-number-update.component.css']
 })
-export class DrawnNumberUpdateComponent implements OnInit {
+export class DrawnNumberUpdateComponent implements OnInit, AfterViewInit {
 
   lastDrawnNumbers: LastDrawnNumber[] = [];
   ticketList: string[] = [];
   submitResult: any;
 
   lotteryTypeId = '';
+  lastDrawnJasonData = "";
+
+  message = null;
+  errorMsg = null;
+
+  numberOfTickets = "5";
 
   numberOfLastDrawnsNeeded = 0;
   dataRetrievalUrl: any;
-  @ViewChild('ticket') ticketsToUpload : ElementRef 
+  @ViewChild('ticket') ticketsToUpload : ElementRef;
+
+  @ViewChild('numOfNumEl') numOfNumElInput: ElementRef;
 
   constructor(private dataService: DataService, private commonService: CommonServices,
-              private activatedRoute: ActivatedRoute) { }
+              private activatedRoute: ActivatedRoute) { 
+                  }
 
 
   /**
@@ -59,6 +71,20 @@ export class DrawnNumberUpdateComponent implements OnInit {
     );
   }
 
+  ngAfterViewInit() {
+    this.activatedRoute.data.pipe(
+      delay(100),
+
+    ).subscribe(data => {
+       console.log(">>>[DomainTicketType] resolved data:");
+       console.log(data.lastNumberDrawnTickets);
+       const resData = data.lastNumberDrawnTickets as LastNumberOfTicketInfo;
+       this.numberOfTickets = ""+resData.numberOfTicket;
+       this.updateComponent(resData.data);
+
+    })
+  }
+
   private resetFields() {
     this.ticketList = [];
     this.lastDrawnNumbers = [];
@@ -68,12 +94,38 @@ export class DrawnNumberUpdateComponent implements OnInit {
     this.submitResult = null;
   }
   
-  /**
-   * Retrieve the data from the backend
-   * @param numOfNumEl
-   */
+
   getData(numOfNumEl: HTMLInputElement) {
     const numberOfNum = +numOfNumEl.value;
+    this.getLastNumberDrawnTickets(numberOfNum);
+  }
+
+/**
+ * 
+ * @param data 
+ */
+  private updateComponent(data: any) {
+      this.lastDrawnNumbers = [];
+
+      const dataDetails = data as {listOfTicketHolders: any, numOfDrawnsNeeded: any, dataRetrievalUrl: any};
+
+      this.numberOfLastDrawnsNeeded = dataDetails.numOfDrawnsNeeded;
+
+      this.dataRetrievalUrl = dataDetails.dataRetrievalUrl;
+      
+      (dataDetails.listOfTicketHolders as LastDrawnNumber[]).forEach((item) => {
+
+          this.lastDrawnNumbers.push(item);
+      });
+   }
+
+
+  /**
+   * Retrieve the data from the backend
+   * @param numberOfNum
+   */
+  getLastNumberDrawnTickets(numberOfNum) {
+    
 
     const thisObj = this;
     this.dataService.getDrawnNumbers(numberOfNum, this.lotteryTypeId).then(data => {
@@ -93,10 +145,13 @@ export class DrawnNumberUpdateComponent implements OnInit {
       }
     );
 
-
-
-
   }
+
+   retrievePastNumberOfTickets() {
+     if(this.dataRetrievalUrl && this.numberOfLastDrawnsNeeded > 0) {
+          
+     }
+   }
 
   /*addTicketToList(ticket: HTMLInputElement) {
     this.ticketList.push(ticket.value);
@@ -170,6 +225,7 @@ export class DrawnNumberUpdateComponent implements OnInit {
 
        // @ts-ignore
        this.submitResult = result.result;
+       this.lastDrawnJasonData = null;
     });
 
 
@@ -181,16 +237,69 @@ export class DrawnNumberUpdateComponent implements OnInit {
    */
   submitDrawnNumberAsJson (textAreaField) {
    // console.log('>>>Data to be submitted:', textAreaField.value);
+       this.submitUpdatedDrawnNumber(textAreaField.value)
+        .subscribe((result) => {
+          this.submitResult = result.result;
+        });
+    }
 
-    this.dataService.submitDrawnNumbersAsJoson(textAreaField.value, this.lotteryTypeId).then((result) => {
+  /**
+   * 
+   * @param jsonString 
+   */
+  private submitUpdatedDrawnNumber(jsonString): Observable<any> {
+    
+    return from(
+      this.dataService.submitDrawnNumbersAsJoson(jsonString, this.lotteryTypeId)
+    )
 
-      // @ts-ignore
-      this.submitResult = result.result;
-    });
+
+
+    // this.dataService.submitDrawnNumbersAsJoson(jsonString, this.lotteryTypeId).then((result) => {
+
+    //   // @ts-ignore
+    //   this.submitResult = result.result;
+    // });
+
 
   }
 
 
+  updateTheLastDrawnTicket() {
+    this.message = "Retrieve the last drawn tickets..."
+    this.errorMsg = null;
+    this.dataService.retrievePastDrawnTickets_Async(
+       this.lotteryTypeId,
+       this.dataRetrievalUrl
+    ).then((value) => {
+      //Expect the value to be the json string
+      this.message = null;
+      this.lastDrawnJasonData = 
+          JSON.stringify(
+              JSON.parse(
+                    value
+                    ), null, 2
+          );
+      this.submitUpdatedDrawnNumber(value)
+         .pipe(
+            tap(result => this.submitResult = result.result),
+            switchMap(_ => {
+              const numOfTicket = this.numOfNumElInput.nativeElement.value;
+              this.getLastNumberDrawnTickets(numOfTicket);
+              this.lastDrawnJasonData = null;
+              return of();
+            })
+
+         ).subscribe();
+      ;
+
+
+    })
+    .catch((error) => {
+      //Error message from the serice
+      this.errorMsg = error;
+    })
+  }
 
 
   clearTickets() {

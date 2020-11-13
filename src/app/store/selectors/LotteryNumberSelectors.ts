@@ -32,7 +32,7 @@ export const selectTicketToHighLight = createSelector (
 
 )
 
-export const selectLastDrawnNumber = createSelector
+
 
 export const lastDrawnNumberSelector = createSelector (
     (state: AppState) => state.lastDrawnNumbers,

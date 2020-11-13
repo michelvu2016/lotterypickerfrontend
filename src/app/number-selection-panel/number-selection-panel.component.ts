@@ -1,13 +1,14 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import {NumberPanelService} from '../number-panel/number-panel.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import { switchMap, delay, take } from 'rxjs/operators';
+import { switchMap, delay, take, map, tap } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import * as  fromHighlightCurrDrawnNumbersAction from '../store/actions/HighlightCurrDrawnNumbersAction';
 import * as  fromHighlightCurrDrawnNumbersSelectors from '../store/selectors/LotteryNumberSelectors';
 import * as constants from '../constants/constants';
 import * as fromActions from '../store/actions/selected-numbers.action';
-import { from, Observable, of, forkJoin } from 'rxjs';
+import { from, Observable, of, forkJoin, Subject } from 'rxjs';
+import { fromSelectors } from '../store';
 
 
 
@@ -30,9 +31,12 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
 
   showTicketNumberInputControl = false;
 
+  latestTicketObs = new Subject<string[]>();
+
   constructor(private numberPanelService: NumberPanelService,
     private currentRoute: ActivatedRoute, private router: Router,
     private store: Store<fromHighlightCurrDrawnNumbersAction.HighlightState>,
+    private appStore: Store<fromActions.AppState>,
     private ticketToBeHighLightedStore: Store<fromActions.AppState>
               ) { }
 
@@ -58,6 +62,8 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
     });
 
     //this.toggleHighlightNumberInPanel()
+    
+
   }
 
   toggleTicketNumberInput() {
@@ -66,7 +72,21 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     //this.dispatchHighLightFlagValue(this.highLightNumberInPanel);
+
+    }
+
+
+  sendTicket()  {
+    console.log(">>>[NumberQuadrantAnalysisCompoennt] setup watch for lastDrawnNumberSelector");
+        this.appStore.select(fromSelectors.lastDrawnNumberSelector)
+            .pipe(
+                map(state => state['lastDrawnNumberList']),
+                tap(state => console.log(">>>[NumberQuadrantAnalysisCompoennt] state:", state))
+            ).subscribe(
+              ticket => this.latestTicketObs.next(ticket)
+            );
   }
+
 
   /**
    * 

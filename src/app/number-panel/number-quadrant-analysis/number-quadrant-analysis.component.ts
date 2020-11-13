@@ -1,10 +1,17 @@
 import { NumberQuadrantComponent } from "../number-quadrant/number-quadrant.component";
-import { OnInit, Component, AfterViewInit, Input, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { OnInit, Component, AfterViewInit, Input, ViewChild, ElementRef, Renderer2, EventEmitter, Output } from '@angular/core';
 import { NumberPanelService } from '../number-panel.service';
 import { TicketInQuadrantAnalysisResultReader } from '../../models/TicketInQuadrantAnalysisResult';
 import { CommonServices } from '../../common/common.services';
-import { Observable, of, from } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Observable, of, from, Subject, interval } from 'rxjs';
+import { map, take, tap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { fromActions, fromSelectors } from 'src/app/store';
+
+
+export interface QuandrantAnalysisResult {
+     [quadNumber: number] : string[]
+}
 
 
 @Component({
@@ -20,12 +27,21 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
   displayClass = "";
   label = "numbers appear in panel:";
 
+  ticketNumberInQuadrantAnalysis: QuandrantAnalysisResult;
+
+  @Input()
+  tickets = [];
+
   @Input('fieldLabel') 
   set fieldLabel(name: string) {
     this.label = name;
   }
 
-  @Input('ticketObs') ticketObs: Observable<string[]>;
+  @Input()
+  ticketObs : Subject<string[]>;
+
+  @Output()
+  dataObsReadyEvent = new EventEmitter<void>();
 
   @Input('displayClass')
   set cssClassToUse(name: string) {
@@ -35,7 +51,8 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
   @ViewChild('field') widget: ElementRef;
 
   constructor(private numberPanelService: NumberPanelService, private commonService: CommonServices,
-          private renderer: Renderer2) {
+    private appStore: Store<fromActions.AppState>,
+    private renderer: Renderer2) {
 
   }
 
@@ -52,7 +69,22 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
     //console.log("[NumberQuadrantAnalysisCompoennt] ngAfterViewInit");
     //this.configTicketInputObs();
 
-    if(!this.displayClass || this.displayClass?.length == 0) {
+    this.ticketObs.subscribe(
+       (ticket) => {
+          this.displayTheAnalysisData(ticket);
+          this.getTicketHitOnQuadrantInfo(ticket);
+
+       }
+    );
+
+     interval(100).pipe(
+       take(1),
+       
+     ).subscribe(() => {
+         this.dataObsReadyEvent.emit();
+     }); 
+
+    if(!this.displayClass || this.displayClass?.length === 0) {
        return;
     }
     const classesRetriever = (process) => {
@@ -75,18 +107,9 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
     this.renderer.addClass(this.widget.nativeElement, this.displayClass);
     
 
+
   }
   
-  private configTicketInputObs() {
-    //console.log(">>>[NumberQuadrantAnalysisCompoennt] configTicketInputObs invoked:");
-      this.ticketObs.pipe(
-        tap(ticket => {
-                //console.log(">>>[NumberQuadrantAnalysisCompoennt] ngAfterViewInit ticket for analysis:", ticket);
-        })
-    ).subscribe(
-      //(ticket) => this.displayTheAnalysisData(ticket)
-      )
-  }
   
 
   /**
@@ -119,5 +142,50 @@ export class NumberQuadrantAnalysisCompoennt implements OnInit, AfterViewInit {
 
     
   }
+
+  /**
+   * 
+   * @param ticket 
+   */
+  private getTicketHitOnQuadrantInfo(ticket: string[])  {
+     const retData : QuandrantAnalysisResult = {};
+
+     const numberListGen = (result: TicketInQuadrantAnalysisResultReader, processor: (aNum: string) => void): void => {
+         
+         result.getTkNumberOccurance((num, nTimes) => {
+            for (let x = 1; x <= nTimes; x++) {
+              processor(this.commonService.pullNumberOut(num));
+            }
+         });
+
+     }
+
+     for (let quadNum = 0; quadNum < this.numberOfQuadrant; quadNum++) {
+      this.numberPanelService.getTicketNumberOccurancesInQuadrant(ticket,
+        quadNum,
+        (finalAcc, tempAcc) => {
+            return {
+               ...finalAcc,
+               ...tempAcc
+            }
+        },
+        (result) => {
+            const quadNmber = result.getQuadrantNumber();
+            if (!retData[quadNmber]) {
+              retData[quadNmber] = [];
+            } 
+             numberListGen(result, (aNumber) => retData[quadNmber].push(aNumber))
+             return retData;
+        }).then(s => {
+          this.ticketNumberInQuadrantAnalysis = s;
+          console.log(">>>[NumberQuadrantAnalysisCompoennt] quandrant analysis:", this.ticketNumberInQuadrantAnalysis);
+        });
+    }
+  }
+
+  getNumberOfQuadrant() {
+    return Object.keys(this.ticketNumberInQuadrantAnalysis ? this.ticketNumberInQuadrantAnalysis : {});
+  }
+
 
 }

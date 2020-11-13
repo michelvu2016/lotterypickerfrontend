@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {NgModule} from '@angular/core';
 import {NumberControlComponent} from './number-panel/number-control/number-control.component';
 import { NumberQuadrantAnalysisCompoennt } from './number-panel/number-quadrant-analysis/number-quadrant-analysis.component';
@@ -7,6 +8,9 @@ import { NumberQuadrantAnalysisCompoennt } from './number-panel/number-quadrant-
    declarations: [
       NumberControlComponent,
       NumberQuadrantAnalysisCompoennt,
+   ],
+   imports: [
+      CommonModule
    ],
 
    exports: [

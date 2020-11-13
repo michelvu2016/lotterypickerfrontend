@@ -55,6 +55,14 @@ import { AppSideNavComponent } from './number-panel/number-quadrant-manager/side
 import { AppMegaNumberEditComponent, MegaNumberSelectionServiceEffect } from './selected-number/mega-number-edit/app-mega-number-edit.component';
 import { AppMegaNumberSelectionPanelComponent } from './selected-number/mega-number-edit/mega-number-selection-panel/app-mega-number-selection-panel.component';
 import { MegaNumberDirective } from './selected-number/mega-number-edit/mega-number.directives';
+import { PlaygroundModule } from './playground/playground.module';
+import { ActivatedRouteSnapshot, RouterModule, RouterStateSnapshot } from '@angular/router';
+import { EntityDataModule, EntityDataService } from '@ngrx/data';
+import { entityConfig } from './store/app-users/meta-data/app-user.metadata';
+import { AppUserModule } from './app-user/app-user.module';
+import { AdminActionListenerEffect } from './app-user/app-admin/app-admin.component';
+import { AppUserDataService } from './store/app-users/services/app-user-data.service';
+import { LastNumberDrawnTicketResolver } from './common/lastNumberDrawnTickets.resolver';
 
 
 
@@ -87,14 +95,12 @@ import { MegaNumberDirective } from './selected-number/mega-number-edit/mega-num
   imports: [
     BrowserModule,
     FormsModule,
+    
     HttpClientModule,
     DragDropModule,
     CommonToolsModule,
     HttpClientJsonpModule,
     CommonMdules,
-    AppDrawnNumberModule,
-    AppNavigationModule,
-    AppRoutingModule,
     StoreModule.forRoot({
       analyzedNumber: analyzedNumbersReducer,
       highlightCurDrawnNumber: highlightCurDrawnNumbersReducer,
@@ -108,14 +114,24 @@ import { MegaNumberDirective } from './selected-number/mega-number-edit/mega-num
       systemMessage: fromReducers.systemMessageReducer,
       megaCorRelNumber: fromReducers.setMegaCorRelNumberReducer,
     }),
-    MeganumberModule,
-    BrowserAnimationsModule,
     EffectsModule.forRoot([
         AppLastDrawnNumbersEffect, 
         FinalSelectedTicketListMonitorEffect,
         ShowMegaNumberSelectionPanelEffect,
         MegaNumberSelectionServiceEffect,
+        AdminActionListenerEffect,
       ]),
+ 
+      EntityDataModule.forRoot(entityConfig),
+
+    AppDrawnNumberModule,
+    AppNavigationModule,
+    AppRoutingModule,
+
+
+    MeganumberModule,
+    BrowserAnimationsModule,
+
     StoreDevtoolsModule.instrument({
        maxAge: 25,
        logOnly: environment.production,
@@ -126,16 +142,25 @@ import { MegaNumberDirective } from './selected-number/mega-number-edit/mega-num
     MatSidenavModule,
     MatTableModule,
     MatDialogModule,
+    PlaygroundModule,
+   
+    
   ],
   providers: [NumberPanelService, 
     DataService, 
     CommonServices, 
     AsynchProcessExecutorService,
-  
+    AppUserDataService,
+    
   ],
   exports: [
     NumberControlComponent
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+   constructor(appUserDataService: AppUserDataService, entityDataService: EntityDataService) {
+       entityDataService.registerService('AppUser', appUserDataService);
+   }
+
+ }

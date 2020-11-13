@@ -30,6 +30,7 @@
                 [fieldLabel]="''"
                 [displayClass]="'number-panel-analysis-medium'"
                 [ticketObs] = "highlightTicketSubjectMulticast"
+                (dataObsReadyEvent)="sendTicket()"
                 >
 
             </app-number-quadrant-analysis></span>

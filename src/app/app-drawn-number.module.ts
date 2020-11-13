@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {DrawnNumberUpdateComponent} from './drawn-number-update/drawn-number-update.component';
 import {CommonModule} from '@angular/common';
 import {CommonToolsModule} from './CommonTools.module';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import {CommonToolsModule} from './CommonTools.module';
    ],
   imports: [
     CommonModule,
-    CommonToolsModule
+    FormsModule,
+    CommonToolsModule,
 
   ],
    exports: [

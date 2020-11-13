@@ -1,7 +1,10 @@
 import { Component, OnInit, EventEmitter, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import { Store } from '@ngrx/store';
 
 import { NavigationEventTriggerConfig } from '../constants/constants';
+import { fromActions } from '../store';
+import { AppState } from '../store/actions/selected-numbers.action';
 
 
 @Component({
@@ -28,7 +31,9 @@ export class NavigationComponent implements OnInit, AfterViewInit {
 
   menuTriggerRelayEventEmitter = new EventEmitter<NavigationEventTriggerConfig>();
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) { }
+  constructor(private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private appStore: Store<AppState>) { }
 
   ngOnInit() {
 
@@ -76,5 +81,10 @@ ngAfterViewInit() {
     this.menuTriggerRelayEventEmitter.emit(menuEvent);
   }
 
+  admin() {
+    //Post message for site administration
+    this.appStore.dispatch(fromActions.adminRequestAction());
+
+  }
 
 }

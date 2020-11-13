@@ -39,6 +39,9 @@ export const actionNames = {
   hideMegaNumberSelectionPanelAction: "[app-mega-number-selection-panel component] hide",
   setMegaCorRelNumberAction: "[selected-number.component] meganumber setCorRelNumber",
   clearMegaCorRelNumberAction: "[selected-number.component] meganumber ClearCorRelNumber",
+  adminRequestAction: "[NavigationComponent] admin request",
+  adminLogoutRequestAction: "[NavigationComponent] admin loggout",
+
 }
 
 
@@ -190,4 +193,12 @@ export const setMegaCorRelNumberAction = createAction(
 export const clearMegaCorRelNumberAction = createAction(
    actionNames.clearMegaCorRelNumberAction
    
+)
+
+export const adminLogoutRequestAction = createAction(
+  actionNames.adminLogoutRequestAction
+)
+
+export const adminRequestAction = createAction(
+  actionNames.adminRequestAction
 )
