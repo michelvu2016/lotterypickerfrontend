@@ -24,6 +24,8 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
   displayMode = 'drawnNumber';
   numberHighLightTextLabel = "";
 
+  systemMessageType = 0;
+
   showQuadrantAnalysis: boolean = false;
   showQuadrantAnalysisLabel: string = "Show quadrant analysis";
 
@@ -62,7 +64,7 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
     });
 
     //this.toggleHighlightNumberInPanel()
-    
+
 
   }
 
@@ -89,7 +91,7 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
 
 
   /**
-   * 
+   *
    */
   getCurrentDrawnTicket() {
 
@@ -126,7 +128,7 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * 
+   *
    */
   private clearTheTicketToBeHighlighed() {
     this.ticketToBeHighLightedStore.dispatch(
@@ -137,8 +139,8 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
 
 
   /**
-   * 
-   * @param flagValue 
+   *
+   * @param flagValue
    */
  private setupTheTicketToBeHighlighed() {
     this.numberPanelService.getCurrentDrawnTicket()
@@ -152,13 +154,13 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
              //Error handling here
           });
 
-    
+
  }
 
  private updateTheTicketToBeHighlighed(flag: boolean) {
    if(flag)
     this.setupTheTicketToBeHighlighed()
-  else 
+  else
     this.clearTheTicketToBeHighlighed()
  }
 
@@ -167,7 +169,7 @@ export class NumberSelectionPanelComponent implements OnInit, AfterViewInit {
   */
  resetLastDrawnNumber() {
     this.store.dispatch(fromActions.resetToCurrentDrawnTicketAction())
- } 
+ }
 
 
 }

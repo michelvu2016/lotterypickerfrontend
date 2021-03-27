@@ -1,0 +1,27 @@
+
+<div class="last-drawn-number-updates" #container>
+
+    <div class="loadding-data" *ngIf="!showComps">
+       <div style="display: block; margin-top: 20px; background-color: azure;">Updating:</div>
+      <app-mv-spinner
+        [parentElem]="container">
+      </app-mv-spinner>
+      
+    </div>
+
+
+     <div class="update-details">
+       
+        <div class='update-silo' *ngFor="let lotteryId of lotteryIds" #detailCompList>
+              <app-drawn-number-mass-update-details
+                  [lotteryTypeId] = "lotteryId"
+                  (loading-done)="loadingDone($event)"
+                  [showContent]="showComps"
+              >
+              </app-drawn-number-mass-update-details>
+  
+           </div>
+
+     </div>
+  
+</div>

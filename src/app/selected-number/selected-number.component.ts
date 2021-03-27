@@ -37,7 +37,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   @Input() ticketNumber: number;
   @Input() ticketId: any;
 
-  private surrogatedTicketId: number = 0;
+  surrogatedTicketId: number = 0;
 
   private prevSelectedNumber: string[] = [];
   newTicket: boolean = true;
@@ -46,6 +46,8 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   highlightNumberFlag = false;
 
   private subNumbersChangeObs : Subscription;
+  generalMessageType = 0;
+
 
   constructor(private numberPanelService: NumberPanelService,
     private selectedNumberService: SelectedNumberService,
@@ -69,7 +71,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   }
 
 
-  
+
 
   ngAfterViewInit() {
     const ticketComparer : (s: string[], t: string[] ) => boolean =
@@ -108,7 +110,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
      ).subscribe(() => this.newTicket = true);
 
 
-     
+
 
   }
 
@@ -154,11 +156,11 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
   drop(event: CdkDragDrop<string[]>) {
     if(event.previousContainer === event.container) {
-      //console.log(`>>>moveItemInArray data: ${event.container.data} 
+      //console.log(`>>>moveItemInArray data: ${event.container.data}
         //      prevIndex: ${event.previousIndex} curIndex ${event.currentIndex}`);
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      //console.log(`>>>transferArrayItem prevData: ${event.previousContainer.data} 
+      //console.log(`>>>transferArrayItem prevData: ${event.previousContainer.data}
           //data: ${event.container.data} prevIndex ${event.previousIndex}
            //curIndex: ${event.currentIndex}`);
       transferArrayItem(event.previousContainer.data,
@@ -177,7 +179,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   }
 
   /**
-   * 
+   *
    */
   private updateSelectedTicketOnStore() {
     //console.log("[SelectedNumberComponent] updateSelectedTicketOnStore numbers:", this.numbers);
@@ -204,8 +206,8 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   }
 
   /**
-   * 
-   * @param number 
+   *
+   * @param number
    */
   selectedMegaNumber(number: string) {
     console.log("[SelectedNumberComponent] selectedMegaNumber: ", number);
@@ -213,11 +215,11 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
   }
 
   /**
-   * 
+   *
    */
   submitNumber() {
     //console.log("[SelectedNumberComponent] submitNumber() called");
-  
+
     const ticket: Ticket = {
       forDrawnDate: new Date().toLocaleDateString(),
       numbers: this.numbers.slice(),
@@ -226,7 +228,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
     }
 
- 
+
 
     if (!this.newTicket) {
       ticket.ticketId = this.surrogatedTicketId;
@@ -238,10 +240,10 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
               mega: this.megaNumber,
            }
         }
-      
+
       }))
     } else {
-      
+
       ticket.ticketId = this.surrogatedTicketId;
       this.selectedTicketStore.dispatch(selectedTicketActions.addTicketAction({selectedTicket: ticket}))
       this.newTicket = false;
@@ -259,7 +261,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
      const range: (number: number) => number[] = n => Array.from({length: n}, (value, key) => key);
      const randNum: (number: number) => number = n => Math.floor(Math.random() * n);
 
-     const timeStamp = ""+curDate.getHours() + curDate.getMinutes() + curDate.getSeconds(); 
+     const timeStamp = ""+curDate.getHours() + curDate.getMinutes() + curDate.getSeconds();
 
      return +(range(5).map(n => randNum(n+(n*2))).join("") + timeStamp);
   }
@@ -268,7 +270,7 @@ export class SelectedNumberComponent implements OnInit, OnDestroy, OnChanges, Af
 
 @Injectable({providedIn: "root"})
 export class FinalSelectedTicketListMonitorEffect {
-   
+
     deleteAllTicketsDetectedSubject = new Subject<any>();
 
    constructor(private actions$: Actions) {

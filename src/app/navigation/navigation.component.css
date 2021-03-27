@@ -4,3 +4,6 @@ a:hover {
     border-bottom: 1em solid rgba(104, 59, 59 .8);
 }
 
+.app-menu-item {
+    color: black;
+}

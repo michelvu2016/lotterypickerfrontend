@@ -5,6 +5,7 @@ import { Store } from '@ngrx/store';
 import { NavigationEventTriggerConfig } from '../constants/constants';
 import { fromActions } from '../store';
 import { AppState } from '../store/actions/selected-numbers.action';
+import { LotteryIdIndex, getLotteryId }  from '../common/appTypes'
 
 
 @Component({
@@ -19,10 +20,15 @@ export class NavigationComponent implements OnInit, AfterViewInit {
 
   lotteryTypesMap = new Map<string, string>(
     [
-      ['fantasy5', 'Fantasy 5'],
-      ['superlotto', 'SuperLotto'],
-      ['powerball', 'Powerball'],
-      ['megamillion', 'MegaMillion']
+      [getLotteryId(LotteryIdIndex.FANTASY5), 'Fantasy 5'],
+      [getLotteryId(LotteryIdIndex.SUPERLOTTO), 'SuperLotto'],
+      [getLotteryId(LotteryIdIndex.POWERBALL), 'Powerball'],
+      [getLotteryId(LotteryIdIndex.MEGAMILION), 'MegaMillion']
+
+      // ['fantasy5', 'Fantasy 5'],
+      // ['superlotto', 'SuperLotto'],
+      // ['powerball', 'Powerball'],
+      // ['megamillion', 'MegaMillion']
     ]
 
   );

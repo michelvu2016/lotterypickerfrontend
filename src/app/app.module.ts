@@ -63,6 +63,8 @@ import { AppUserModule } from './app-user/app-user.module';
 import { AdminActionListenerEffect } from './app-user/app-admin/app-admin.component';
 import { AppUserDataService } from './store/app-users/services/app-user-data.service';
 import { LastNumberDrawnTicketResolver } from './common/lastNumberDrawnTickets.resolver';
+import { MVSpinnerModule } from './common/spinners/mv-spinner/mv-spinner.module';
+
 
 
 
@@ -90,6 +92,7 @@ import { LastNumberDrawnTicketResolver } from './common/lastNumberDrawnTickets.r
     AppMegaNumberEditComponent,
     AppMegaNumberSelectionPanelComponent,
     MegaNumberDirective,
+    
 
   ],
   imports: [
@@ -143,7 +146,7 @@ import { LastNumberDrawnTicketResolver } from './common/lastNumberDrawnTickets.r
     MatTableModule,
     MatDialogModule,
     PlaygroundModule,
-   
+    MVSpinnerModule,
     
   ],
   providers: [NumberPanelService, 

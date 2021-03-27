@@ -21,9 +21,9 @@ export interface DialogData {
 export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
 
     @Output() selectedMegaNumber = new EventEmitter<string>();
-    
-    
-    private uniqueId: string = ""; 
+
+
+    private uniqueId: string = "";
 
     @Input('ticketId')
     public get ticketId(): number {
@@ -38,10 +38,10 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
     editMode = false;
 
     constructor (private dialog: MatDialog,
-        private commonServices: CommonServices, 
+        private commonServices: CommonServices,
         private showMegaNumberSelectionPanelStore: Store<fromActions.AppState>,
         private selectedMegaNumberEffect: MegaNumberSelectionServiceEffect) {
-            selectedMegaNumberEffect.selectedMegaNumber$.subscribe(({megaNumber, corRelNumber}) => 
+            selectedMegaNumberEffect.selectedMegaNumber$.subscribe(({megaNumber, corRelNumber}) =>
                 {
                     console.log(`[AppMegaNumberEditComponent] megaNumber: ${megaNumber} corRelNumber: ${corRelNumber} `)
                     if (this.uniqueId == corRelNumber)
@@ -50,8 +50,8 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
     }
 
     /**
-     * 
-     * @param number 
+     *
+     * @param number
      */
     private setMegaNumber(number: string) {
         this.megaNumber = number;
@@ -60,7 +60,7 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
 
 
     /**
-     * 
+     *
      */
     private emitSelectedMegaNumber() {
         this.selectedMegaNumber.emit(this.megaNumber);
@@ -68,7 +68,7 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
 
 
     /**
-     * 
+     *
      */
     openDialog() {
         const dialogRef = this.dialog.open(MegaSelectionDialog, {
@@ -81,12 +81,12 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
     }
 
     /**
-     * 
+     *
      */
     onfocus() {
         //this.openDialog();
         //this.showMegaNumberSelectionPanelStore.dispatch(fromActions.showMegaNumberSelectionPanelAction({number: this.megaNumber}))
-        
+
     }
 
     ngOnInit() {
@@ -97,7 +97,7 @@ export class AppMegaNumberEditComponent implements AfterViewInit, OnInit {
 
     }
 
-    selectFromPanel() {
+    selectFromPanel(event: any) {
         this.editMode = false;
         this.showMegaNumberSelectionPanelStore
            .dispatch(

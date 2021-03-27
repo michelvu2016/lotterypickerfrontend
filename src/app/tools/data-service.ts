@@ -1,4 +1,4 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 
 import {Injectable} from '@angular/core';
 import {catchError, map, tap, retryWhen, delayWhen, filter, take, startWith, switchMap, mapTo} from 'rxjs/operators';
@@ -38,6 +38,7 @@ export interface HostResponse {
     status: string,
     data: string,
     message: string,
+    isError: boolean,
 }
 
 export class HostError implements HostResponse {
@@ -45,10 +46,24 @@ export class HostError implements HostResponse {
   status: 'error';
   data: null;
   message: null;
+  isError: true;
 
-  constructor(status, message) {
+  constructor(status?, message?) {
      this.status = status;
      this.message = message;
+     this.isError = true;
+     if (status === null) {
+       this.status = 'error';
+     }
+  }
+
+  setStatus(status) {
+    this.status = status;
+
+  }
+
+  setMessage(message) {
+    this.message = message;
   }
 
 }
@@ -150,7 +165,7 @@ export class DataService {
      * @param gameName 
      * @param dataAccessUrl 
      */
-    retrievePastDrawnTickets_Async(gameId: string, dataAccessUrl:string): Promise<string> {
+    retrievePastDrawnTickets_Async(gameId: string, dataAccessUrl:string): Promise<any> {
        return this.retrieveData_Async(
          {
            params: {
@@ -179,7 +194,7 @@ export class DataService {
      *   numberOfAttempts:
      * } 
      */
-    retrieveData_Async(httpOptions: HttpOptions): Promise<string> {
+    retrieveData_Async(httpOptions: HttpOptions): Promise<any> {
    
       const getData = (baton) => {
 
@@ -201,7 +216,19 @@ export class DataService {
                  tap(data => console.log("data:", data)),
                  catchError(err => {
                     console.log(">>>Error caught:", err.error);
-                    throw new HostError(""+err.error.status, err.error.error);
+                    console.log(">>>Error caught - err:", err);
+                    const hostError = new HostError();
+                    if(err instanceof HttpErrorResponse)
+                      {
+                          const httpError = err as HttpErrorResponse;
+                          hostError.setStatus(err.status);
+                          hostError.setMessage(err.message);
+                      } else {
+                        hostError.setStatus(""+err.error.status);
+                        hostError.setMessage(err.error.error);
+                      }
+                      
+                    throw hostError;
                  })
                )
          }
@@ -223,14 +250,17 @@ export class DataService {
                     )
                  }),
              retryWhen(exc => {
+                console.log(">>>retryWhen hit");
                 return exc.pipe (
                    tap(val => {
+                      console.log(">>>retryWhen val: ", val);
                       const resp = val as HostResponse;
                       if (resp.status === 'pending' && attemptCount > httpOptions.numberOfAttempts) {
                          throw new HostError('failure', 'Server not returned any data after multiple attempts');
                         } else if (resp.status === 'success') {
                          throw resp;
-                        } else if(resp.status === '500') {
+                        } else if(resp.isError) {
+                          console.log(">>>Throw runtime exception...");
                           throw resp;
                         }
                       baton = resp.baton;
@@ -240,6 +270,7 @@ export class DataService {
                 )
              }),
              catchError(err => {
+               console.log(">>>>Catch error  at exit point: ", err);
                const resp = err as HostResponse;
                return of(err);
              })
@@ -249,6 +280,7 @@ export class DataService {
                  if (val.status === 'success') {
                     resolve(val.data)
                  } else {
+                   console.log(">>>>Sending error back");
                    reject(`Unable to retrieve the data. Error: ${val.message}`)
                  }
                }
@@ -261,84 +293,6 @@ export class DataService {
  
      
   }
-
-
-    /**
-     * 
-     * @param gameName 
-     * @param dataAccessUrl 
-     */
- retrievePastDrawnTickets_Async_xx(gameName: string, dataAccessUrl:string): Promise<string> {
-   
-     const getData = (gameId, baton, dataUrl, hostUrl) => {
-          const params = new HttpParams({
-            fromString: `id=${gameId}&baton=${baton}&url=${dataUrl}`
-          });
-          return this.http.get<HostResponse>(hostUrl, {params, headers: this.createBasicAuthHeader(username, password)})
-              .pipe(
-                tap(data => console.log("data:", data)),
-                catchError(err => {
-                   console.log(">>>Error caught:", err.error);
-                   throw new HostError(""+err.error.status, err.error.error);
-                })
-              )
-        }
-
-      const promise = new Promise<string>((resolve, reject) => {
-
-        let baton = "";
-        let attemptCount = 0;
-  
-        interval(100)
-        .pipe(
-            take(1),
-            switchMap(val => {
-               return getData(gameName, baton, dataAccessUrl, lastDrawnTicketsUrl)
-                   .pipe(
-                       tap(resp => {
-                          throw resp;
-                       })
-                   )
-                }),
-            retryWhen(exc => {
-               return exc.pipe (
-                  tap(val => {
-                     const resp = val as HostResponse;
-                     if (resp.status === 'pending' && attemptCount > 3) {
-                        throw new HostError('failure', 'Server not returned any data after multiple attempts');
-                       } else if (resp.status === 'success') {
-                        throw resp;
-                       } else if(resp.status === '500') {
-                         throw resp;
-                       }
-                     baton = resp.baton;
-                     attemptCount++;
-                  }),
-                  delayWhen(_ => timer(DELAY_BETWEEN_ATTEMPTS_IN_SECS * 1000))
-               )
-            }),
-            catchError(err => {
-              const resp = err as HostResponse;
-              return of(err);
-            })
-            )
-            .subscribe((resp) => {
-                const val = resp as HostResponse;
-                if (val.status === 'success') {
-                   resolve(val.data)
-                } else {
-                  reject(`Unable to retrieve the data. Error: ${val.message}`)
-                }
-              }
-            )});
-
-      
-     return promise;
-      
-    
-
-    
- }
 
   // -----------------------------------------------
 
@@ -382,7 +336,19 @@ export class DataService {
    */
   getDrawnNumbers(numberOfNumbers: number, lotteryTypeId: string) {
     //console.log('>>>Invoke the getDrawnNumberWithAsync');
-    return this.getDrawnNumberWithAsync(numberOfNumbers, lotteryTypeId);
+    return this.retrieveData_Async({
+        params: {
+            numLines: numberOfNumbers,
+            
+        },
+        header: {
+          Authorization: 'Basic ' + btoa(username + ':' +  password)
+        },
+        targetUrl: `${drawnNumberHistoryUrl}/${lotteryTypeId}`,
+        numberOfAttempts: 5,
+        timeWaitBetweenAttemptInSeconds: 2,
+    })
+    //return this.getDrawnNumberWithAsync(numberOfNumbers, lotteryTypeId);
   }
 
   /**
@@ -582,7 +548,7 @@ export class DataService {
             error: (error) => console.log(">>>Error:", error)
 
         })
-    ; 
+    ;
  }
 
 }

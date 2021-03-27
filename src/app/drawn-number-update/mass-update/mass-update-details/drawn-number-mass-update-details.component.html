@@ -1,0 +1,98 @@
+<div class="lastDrawnTicketUpdate" *ngIf="showContent" #dataContainer>
+
+     
+
+      <h3>Update the last drawn number history for <strong>{{lotteryTypeId}}</strong></h3>
+      <div style="margin-top:5px; margin-bottom: 5px;">
+        <h4>How many draws back to you want to see?</h4>
+        <span>
+          <input type="text" 
+          placeholder="Enter number" 
+          [(ngModel)]="numberOfTickets"
+          
+          #numOfNumEl>
+      <button class="btn btn-primary" style="margin-left:5px;"
+              (click)="getData(numOfNumEl)"
+      >Get Data</button></span>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <span class="dateField">Date drawn</span>
+          <span class="seqNumberField">Seq Num</span>
+          <span class="numberField">Numbers</span>
+          <span class="megaField">Mega</span>
+        </li>
+      
+        <li class="list-group-item" *ngFor="let ticket of lastDrawnNumbers; let i = index">
+          <span class="dateField">{{ticket.date}}</span>
+          <span class="seqNumberField">{{ticket.seqNum}}</span>
+          <span class="numberField">{{ticket.numbers | stringArrayToString}}</span>
+          <span class="megaField">{{ticket.mega}}</span>
+        </li>
+      </ul>
+      <div>
+        <div *ngIf="message != null">{{message}}</div>
+        <div *ngIf="errorMsg != null" class="error-message">{{errorMsg}}</div>
+      </div>
+ <div *ngIf="numberOfLastDrawnsNeeded > 0">
+        <div>
+          <h4>The number of latest drawwn ticket needed: {{numberOfLastDrawnsNeeded}}</h4>
+        </div>
+        <div><button
+          (click) = "updateTheLastDrawnTicket()"
+          >Update now</button>
+          <button
+            (click)="getLatestDrawnInfo()"
+          >
+            Get the latest drawn info
+          </button>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap;">
+          <h4>Click on the link <a href="{{dataRetrievalUrl}}" target="_blank">{{dataRetrievalUrl}}</a></h4>
+        </div>
+
+ </div>
+
+
+<!-- Section for update the number history -->
+<div class="update-number" *ngIf="lastDrawnJasonData != null &&  this.lastDrawnJasonData.length > 0"> 
+  <div class="row" style="font-size:12pt;">
+    <div class="col-xs-9 col-sm-9 col md-9 col-lg-9">
+      <!--
+      <input type="text" placeholder="enter the last drawn number here" class="form-control" #ticket>
+      -->
+
+      <textarea rows="15" cols="125" placeholder="enter the last drawn number here"
+             class="form-control" #ticket>
+             {{lastDrawnJasonData}}
+      </textarea>
+    </div>
+    <div class="col-xs-9 col-sm-9 col md-6 col-lg-6">
+
+
+
+    </div>
+  </div>
+
+  <div style="margin-top:30px">
+     <button class="btn btn-primary"
+     (click)="submitDrawnNumberAsJson(ticket)"
+     >Submit</button>
+    <button class="btn btn-primary"  style="margin-left:5px;"
+            (click)="clearField(ticket)"
+    >Clear Input</button>
+  </div>
+
+  <div *ngIf="submitResult">
+    <h3>Submit result:</h3>
+    <div>
+       {{submitResult}}
+    </div>
+  </div>
+
+</div>
+
+
+
+</div>
